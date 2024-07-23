@@ -73,105 +73,117 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
       });
     }
 
-    return AlertDialog(
-      title: const Text("New Reading"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Text("Weight"),
-          TextField(
-            controller: weightcontroller,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Weight",
-              suffixIcon: Padding(
-                padding: EdgeInsets.all(15),
-                child: Text("kg"),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            keyboardType: TextInputType.none,
-            onTap: () {
-              selectDate();
-            },
-            controller: datecontroller,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Date",
-              prefixIcon: Icon(Icons.calendar_today),
-            ),
-            readOnly: true,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            keyboardType: TextInputType.none,
-            controller: timecontroller,
-            onTap: () {
-              selectTime();
-            },
-            decoration: const InputDecoration(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: AlertDialog(
+        title: const Text("New Reading"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Text("Weight"),
+            TextField(
+              controller: weightcontroller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Time",
-                prefixIcon: Icon(Icons.access_time)),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          TextField(
-            controller: notescontroller,
-            maxLines: 1,
-            keyboardType: TextInputType.text,
-            decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Notes",
-                prefixIcon: Icon(Icons.notes)),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  final WeightProvider value = context.read<WeightProvider>();
-                  final double w = num.tryParse(weightcontroller.text) == null
-                      //! show snackbar here
-                      ? 0
-                      : double.parse(weightcontroller.text);
-                  value.add(NewWeight(
-                      weight: w,
-                      date: datecontroller.text,
-                      time: timecontroller.text, notes: notescontroller.text,));
-                  Navigator.of(context).pop();
-                },
-                style: ButtonStyle(
-                  backgroundColor:
-                      WidgetStatePropertyAll(Colors.purple.shade200),
-                ),
-                child: const Text(
-                  "Save",
-                  style: TextStyle(color: Colors.black),
+                hintText: "Weight",
+                suffixIcon: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text("kg"),
                 ),
               ),
-              const SizedBox(
-                width: 5,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextField(
+              keyboardType: TextInputType.none,
+              onTap: () {
+                selectDate();
+              },
+              controller: datecontroller,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Date",
+                prefixIcon: Icon(Icons.calendar_today),
               ),
-              TextButton(
+              readOnly: true,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextField(
+              keyboardType: TextInputType.none,
+              controller: timecontroller,
+              onTap: () {
+                selectTime();
+              },
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Time",
+                  prefixIcon: Icon(Icons.access_time)),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            TextField(
+              controller: notescontroller,
+              maxLines: 1,
+              keyboardType: TextInputType.text,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Notes",
+                  prefixIcon: Icon(Icons.notes)),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    final WeightProvider value = context.read<WeightProvider>();
+
+                    
+                    if (num.tryParse(weightcontroller.text) == null) {
+                      const SnackBar invalidWeight =
+                          SnackBar(content: Text("Enter a valid weight") , behavior: SnackBarBehavior.floating,);
+                      ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
+                    }
+                    else{
+                      value.add(NewWeight(
+                      weight: double.parse(weightcontroller.text),
+                      date: datecontroller.text,
+                      time: timecontroller.text,
+                      notes: notescontroller.text,
+                    ));
+                    Navigator.of(context).pop();
+                    }
+
+                    
                   },
-                  child: const Text("Cancel"))
-            ],
-          )
-        ],
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStatePropertyAll(Colors.purple.shade200),
+                  ),
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Cancel"))
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
