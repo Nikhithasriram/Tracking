@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tracking_app/Provider/weightprovider.dart';
+import 'package:tracking_app/models/weightclass.dart';
 
 class MyAlertDialog extends StatefulWidget {
-  final TextEditingController datecontroller;
-  final TextEditingController timecontroller;
-  final TextEditingController weightcontroller;
-  final TextEditingController notescontroller;
-  final VoidCallback addnewReading;
-  const MyAlertDialog(
-      {super.key,
-      required this.datecontroller,
-      required this.timecontroller,
-      required this.weightcontroller,
-      required this.notescontroller,
-      required this.addnewReading,
-      });
+  const MyAlertDialog({
+    super.key,
+  });
 
   @override
   State<MyAlertDialog> createState() => _MyAlertDialogState();
 }
 
 class _MyAlertDialogState extends State<MyAlertDialog> {
+  final TextEditingController datecontroller = TextEditingController();
+  final TextEditingController timecontroller = TextEditingController();
+  final TextEditingController weightcontroller = TextEditingController();
+  final TextEditingController notescontroller = TextEditingController();
+
+  @override
+  void initState() {
+    DateTime now = DateTime.now();
+    TimeOfDay time = TimeOfDay.now();
+    String nowdate =
+        "${now.day.toString()}-${now.month.toString()}-${now.year.toString()}";
+    datecontroller.text = nowdate;
+    String min = time.minute < 10 ? "0${time.minute}" : time.minute.toString();
+
+    String nowTime =
+        "${time.hourOfPeriod}:$min ${time.period.toString().split(".")[1]}";
+    timecontroller.text = nowTime;
+
+    weightcontroller.clear();
+    notescontroller.clear();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<void> selectDate() async {
@@ -35,7 +51,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         if (picked != null) {
           String pickedDate =
               "${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}";
-          widget.datecontroller.text = pickedDate;
+          datecontroller.text = pickedDate;
         }
       });
     }
@@ -51,7 +67,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         if (time != null) {
           String min =
               time.minute < 10 ? "0${time.minute}" : time.minute.toString();
-          widget.timecontroller.text =
+          timecontroller.text =
               "${time.hourOfPeriod}:$min ${time.period.toString().split(".")[1]}";
         }
       });
@@ -64,7 +80,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         children: [
           // Text("Weight"),
           TextField(
-            controller: widget.weightcontroller,
+            controller: weightcontroller,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -83,7 +99,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
             onTap: () {
               selectDate();
             },
-            controller: widget.datecontroller,
+            controller: datecontroller,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: "Date",
@@ -96,7 +112,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
           ),
           TextField(
             keyboardType: TextInputType.none,
-            controller: widget.timecontroller,
+            controller: timecontroller,
             onTap: () {
               selectTime();
             },
@@ -108,8 +124,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
           const SizedBox(
             height: 30,
           ),
-           TextField(
-            controller: widget.notescontroller,
+          TextField(
+            controller: notescontroller,
             maxLines: 1,
             keyboardType: TextInputType.text,
             decoration: const InputDecoration(
@@ -125,7 +141,16 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  widget.addnewReading();
+                  final WeightProvider value = context.read<WeightProvider>();
+                  final double w = num.tryParse(weightcontroller.text) == null
+                      //! show snackbar here
+                      ? 0
+                      : double.parse(weightcontroller.text);
+                  value.add(NewWeight(
+                      weight: w,
+                      date: datecontroller.text,
+                      time: timecontroller.text, notes: notescontroller.text,));
+                  Navigator.of(context).pop();
                 },
                 style: ButtonStyle(
                   backgroundColor:

@@ -3,38 +3,27 @@ import 'package:flutter/material.dart';
 // import 'package:tracking_app/utils/alert_dialog.dart';
 
 class MylistTile extends StatelessWidget {
-  MylistTile(
+ const MylistTile(
       {super.key,
       required this.weight,
       required this.date,
       required this.time,
       required this.notes});
-  final int weight;
+  final double weight;
   final String date;
   final String time;
   final String notes;
 
-  final TextEditingController weightcontroller = TextEditingController();
-  final TextEditingController datecontroller = TextEditingController();
-  final TextEditingController timecontroller = TextEditingController();
-  final TextEditingController notescontroller = TextEditingController();
+  // final TextEditingController weightcontroller = TextEditingController();
+  // final TextEditingController datecontroller = TextEditingController();
+  // final TextEditingController timecontroller = TextEditingController();
+  // final TextEditingController notescontroller = TextEditingController();
 
-  void initializecontroller() {
-    weightcontroller.text = weight.toString();
-    datecontroller.text = date;
-    timecontroller.text = time;
-    notescontroller.text = notes;
-  }
-
-  // void editinfo() {
-  //   initializecontroller();
-  //   MyAlertDialog(
-  //     weightcontroller: weightcontroller,
-  //     datecontroller: datecontroller,
-  //     timecontroller: timecontroller,
-  //     notescontroller: notescontroller,
-  //     addnewReading: ,
-  //   );
+  // void initializecontroller() {
+  //   weightcontroller.text = weight.toString();
+  //   datecontroller.text = date;
+  //   timecontroller.text = time;
+  //   notescontroller.text = notes;
   // }
 
   @override
