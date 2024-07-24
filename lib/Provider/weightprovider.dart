@@ -15,4 +15,9 @@ class WeightProvider extends ChangeNotifier {
     _item.remove(w);
     notifyListeners();
   }
+
+  void update(int index, NewWeight w) {
+    _item[index] = w;
+    notifyListeners();
+  }
 }

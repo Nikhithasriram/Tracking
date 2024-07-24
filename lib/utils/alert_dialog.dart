@@ -4,9 +4,8 @@ import 'package:tracking_app/Provider/weightprovider.dart';
 import 'package:tracking_app/models/weightclass.dart';
 
 class MyAlertDialog extends StatefulWidget {
-  const MyAlertDialog({
-    super.key,
-  });
+  final int index;
+  const MyAlertDialog({super.key, this.index = -1});
 
   @override
   State<MyAlertDialog> createState() => _MyAlertDialogState();
@@ -18,8 +17,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
   final TextEditingController weightcontroller = TextEditingController();
   final TextEditingController notescontroller = TextEditingController();
 
-  @override
-  void initState() {
+  void defaultinitializer() {
     DateTime now = DateTime.now();
     TimeOfDay time = TimeOfDay.now();
     String nowdate =
@@ -33,6 +31,20 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
 
     weightcontroller.clear();
     notescontroller.clear();
+  }
+
+  @override
+  void initState() {
+    if (widget.index == -1) {
+      defaultinitializer();
+    } else {
+      final value = Provider.of<WeightProvider>(context, listen: false);
+      weightcontroller.text = value.items[widget.index].weight.toString();
+      datecontroller.text = value.items[widget.index].date;
+      timecontroller.text = value.items[widget.index].time;
+      notescontroller.text = value.items[widget.index].notes;
+    }
+
     super.initState();
   }
 
@@ -76,6 +88,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AlertDialog(
+        scrollable: true,
         title: const Text("New Reading"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -145,31 +158,39 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                   onPressed: () {
                     final WeightProvider value = context.read<WeightProvider>();
 
-                    
                     if (num.tryParse(weightcontroller.text) == null) {
-                      const SnackBar invalidWeight =
-                          SnackBar(content: Text("Enter a valid weight") , behavior: SnackBarBehavior.floating,);
+                      const SnackBar invalidWeight = SnackBar(
+                        content: Text("Enter a valid weight"),
+                        behavior: SnackBarBehavior.floating,
+                      );
                       ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
+                    } else {
+                      if (widget.index == -1) {
+                        value.add(NewWeight(
+                          weight: double.parse(weightcontroller.text),
+                          date: datecontroller.text,
+                          time: timecontroller.text,
+                          notes: notescontroller.text,
+                        ));
+                        Navigator.of(context).pop();
+                      } else {
+                        NewWeight w = NewWeight(
+                            weight: double.parse(weightcontroller.text),
+                            date: datecontroller.text,
+                            time: timecontroller.text,
+                            notes: notescontroller.text);
+                        value.update(widget.index, w);
+                        Navigator.of(context).pop();
+                      }
                     }
-                    else{
-                      value.add(NewWeight(
-                      weight: double.parse(weightcontroller.text),
-                      date: datecontroller.text,
-                      time: timecontroller.text,
-                      notes: notescontroller.text,
-                    ));
-                    Navigator.of(context).pop();
-                    }
-
-                    
                   },
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStatePropertyAll(Colors.purple.shade200),
                   ),
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(color: Colors.black),
+                  child: Text(
+                    widget.index == -1 ? "Save" : "Update",
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
                 const SizedBox(

@@ -31,9 +31,6 @@ class MylistTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
       child: ListTile(
-        onTap: () {
-          // editinfo();
-        },
         title: Text(
           "Weight: $weight kg",
           style: const TextStyle(fontSize: 18),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/weightprovider.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:tracking_app/utils/listtile.dart';
-// import 'package:tracking_app/models/weightclass.dart';
 import 'package:tracking_app/utils/alert_dialog.dart';
 
 class WeightPage extends StatefulWidget {
@@ -14,15 +12,16 @@ class WeightPage extends StatefulWidget {
 }
 
 class _WeightState extends State<WeightPage> {
-
-
-  void createnewElement(context) {
-    // initializeController();
+  void createnewElement({int index = -1}) {
+    // print(context);
     showDialog(
         context: context,
         builder: (context) {
-          return const ScaffoldMessenger(
-            child:  MyAlertDialog(),);
+          return ScaffoldMessenger(
+            child: MyAlertDialog(
+              index: index,
+            ),
+          );
         });
   }
 
@@ -37,11 +36,18 @@ class _WeightState extends State<WeightPage> {
             return ListView.builder(
               itemCount: value.items.length,
               itemBuilder: (context, index) {
-                return MylistTile(
-                    weight: value.items[index].weight,
-                    date: value.items[index].date,
-                    time: value.items[index].time,
-                    notes: value.items[index].notes);
+                return InkWell(
+                  onTap: () {
+                    createnewElement(
+                      index: index,
+                    );
+                  },
+                  child: MylistTile(
+                      weight: value.items[index].weight,
+                      date: value.items[index].date,
+                      time: value.items[index].time,
+                      notes: value.items[index].notes),
+                );
               },
             );
           },
@@ -49,7 +55,7 @@ class _WeightState extends State<WeightPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          createnewElement(context);
+          createnewElement();
         },
         child: const Icon(Icons.add),
       ),
