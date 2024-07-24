@@ -89,7 +89,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
       backgroundColor: Colors.transparent,
       body: AlertDialog(
         scrollable: true,
-        title: const Text("New Reading"),
+        title:  Text(widget.index == -1? "New Reading":"Update Reading"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
