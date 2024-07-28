@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:tracking_app/models/weightclass.dart';
 import 'package:flutter/material.dart';
+import 'package:tracking_app/functions/mydatetime.dart';
 
 class WeightProvider extends ChangeNotifier {
   final List<NewWeight> _item = [];
@@ -12,9 +13,9 @@ class WeightProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       bool added = false;
-      DateTime weightdate = mydatetime(w);
+      DateTime weightdate = mydatetime(w.date, w.time);
       for (int i = 0; i < _item.length; i++) {
-        DateTime idate = mydatetime(_item[i]);
+        DateTime idate = mydatetime(_item[i].date , _item[i].time);
         if (weightdate.isAfter(idate)) {
           _item.insert(i, w);
           notifyListeners();
@@ -41,23 +42,4 @@ class WeightProvider extends ChangeNotifier {
   }
 }
 
-DateTime mydatetime(NewWeight w) {
-  String date = w.date.split('-')[0];
-  String month = w.date.split('-')[1];
-  String year = w.date.split('-')[2];
-  date = int.parse(date) < 10 ? "0$date" : date;
-  month = int.parse(month) < 10 ? "0$month" : month;
-  String period = w.time.split(" ")[1];
-  int hrs = int.parse((w.time.split(" ")[0]).split(":")[0]);
-  String min = (w.time.split(" ")[0]).split(":")[1];
-  if (hrs == 12 && period == "am") {
-    hrs = 0;
-  }
-  if (period == "pm") {
-    hrs = hrs + 12;
-  }
-  String withzerohr = "";
-  withzerohr = hrs < 10 ? "0$hrs" : hrs.toString();
 
-  return DateTime.parse("$year-$month-$date $withzerohr:$min:00");
-}
