@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 // import 'package:provider/provider.dart';
 // import 'package:tracking_app/Provider/weightprovider.dart';
-import 'package:tracking_app/utils/editpanel.dart';
+import 'package:tracking_app/utils/weight_utils/editpanel.dart';
 
 class MylistTile extends StatelessWidget {
   const MylistTile(
@@ -22,35 +22,34 @@ class MylistTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-      child: ExpansionTile(
+      child: ListTile(
         title: Text(
           "Weight: $weight kg",
           style: const TextStyle(fontSize: 18),
         ),
         subtitle: Text(notes),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              time,
-              style: const TextStyle(fontSize: 14),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  time,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                Text(
+                  date,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
             ),
-            Text(
-              date,
-              style: const TextStyle(fontSize: 14),
-            ),
+            EditPanel(index: index)
           ],
         ),
-        collapsedBackgroundColor: Colors.white,
-        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-
-        children: [
-          EditPanel(
-            index: index,
-          )
-        ],
+        tileColor: Colors.white,
+        contentPadding: const EdgeInsets.only(left: 16, right: 8),
       ),
     );
   }

@@ -24,10 +24,10 @@ class DayWater {
   String uuid;
   List<NewWater> dayContents;
 
-  DayWater(
-      {required this.intakeml,
-      required this.outputml,
-      required this.date,
-      required this.dayContents,
-      }):uuid = const Uuid().v4();
+  DayWater({
+    required this.intakeml,
+    required this.outputml,
+    required this.date,
+    required this.dayContents,
+  }) : uuid = const Uuid().v4();
 }

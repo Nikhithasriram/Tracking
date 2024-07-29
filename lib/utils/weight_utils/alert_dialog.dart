@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/weightprovider.dart';
 import 'package:tracking_app/models/weightclass.dart';
+// import 'package:expansion_tile_group/expansion_tile_group.dart';
 
 class MyAlertDialog extends StatefulWidget {
   final int index;
@@ -89,14 +90,15 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
       backgroundColor: Colors.transparent,
       body: AlertDialog(
         scrollable: true,
-        title:  Text(widget.index == -1? "New Reading":"Update Reading"),
+        title: Text(widget.index == -1 ? "New Reading" : "Update Reading"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Text("Weight"),
             TextField(
               controller: weightcontroller,
-              keyboardType: TextInputType.number,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Weight",

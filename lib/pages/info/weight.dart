@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/weightprovider.dart';
-import 'package:tracking_app/utils/listtile.dart';
-import 'package:tracking_app/utils/showdialog.dart';
+import 'package:tracking_app/utils/weight_utils/listtile.dart';
+import 'package:tracking_app/utils/weight_utils/showdialog.dart';
 
 class WeightPage extends StatefulWidget {
   const WeightPage({super.key});

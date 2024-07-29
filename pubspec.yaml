@@ -38,6 +38,7 @@ dependencies:
   uuid: ^4.4.2
   provider: ^6.1.2
   expansion_tile_group: ^1.2.7
+  share_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:
