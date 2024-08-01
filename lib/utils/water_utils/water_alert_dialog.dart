@@ -226,10 +226,10 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
           ],
         ),
         actions: [
-          ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(Colors.purple.shade200)),
+          FilledButton(
+            // style: ButtonStyle(
+            //     backgroundColor:
+            //         WidgetStatePropertyAll(Colors.purple.shade200)),
             onPressed: () {
               final value = context.read<WaterProvider>();
               final double intakeml =
@@ -261,7 +261,6 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
             },
             child: Text(
               widget.daycontentsindex == -1 ? "Save" : "Update",
-              style: const TextStyle(color: Colors.black),
             ),
           ),
           TextButton(

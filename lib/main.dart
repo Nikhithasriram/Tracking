@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tracking_app/Provider/dialysisprovider.dart';
 import 'package:tracking_app/Provider/waterprovider.dart';
 import 'pages/bottom_navigation.dart';
 import 'package:tracking_app/Provider/weightprovider.dart';
@@ -17,6 +18,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<WeightProvider>(create: (_) => WeightProvider()),
         ChangeNotifierProvider<WaterProvider>(create: (_) => WaterProvider()),
+        ChangeNotifierProvider<DialysisProvier>(create: (_) => DialysisProvier()),
+
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

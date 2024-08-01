@@ -156,7 +156,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
+                FilledButton(
                   onPressed: () {
                     final WeightProvider value = context.read<WeightProvider>();
 
@@ -186,13 +186,8 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
                       }
                     }
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStatePropertyAll(Colors.purple.shade200),
-                  ),
                   child: Text(
                     widget.index == -1 ? "Save" : "Update",
-                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
                 const SizedBox(

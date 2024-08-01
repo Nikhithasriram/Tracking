@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracking_app/pages/info/dialysis.dart';
 import 'info/weight.dart';
 import 'info/water.dart';
 
@@ -13,6 +14,7 @@ class _InfoState extends State<Info> {
   List<Widget> tabs = const [
     WeightPage(),
     Water(),
+    DialysisPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,9 @@ class _InfoState extends State<Info> {
               ),
               Tab(
                 text: "Water",
+              ),
+              Tab(
+                text: "Dialysis",
               )
             ],
           ),
