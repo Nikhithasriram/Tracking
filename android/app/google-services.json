@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "963263552483",
+    "project_id": "tracking-a140b",
+    "storage_bucket": "tracking-a140b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963263552483:android:0962f7cfdbeb0f832b1ed6",
+        "android_client_info": {
+          "package_name": "com.example.tracking_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "963263552483-j3jr25ufpo5rs8hbmve98ohfu9p6kvv9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tracking_app",
+            "certificate_hash": "31520c775da36008455ec04ffe4b31af13c53ed5"
+          }
+        },
+        {
+          "client_id": "963263552483-urd7mtvkaiktnev5tiduu043l96qc908.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpcJqlPQAhQP1-KbPHyDZxBIuysWKWUF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963263552483-urd7mtvkaiktnev5tiduu043l96qc908.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "963263552483-mi89gdregf35a18ca59hjt2cr6hjucg9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.trackingApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
