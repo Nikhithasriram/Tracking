@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
-// import 'package:provider/provider.dart';
-// import 'package:tracking_app/Provider/weightprovider.dart';
 import 'package:tracking_app/utils/weight_utils/editpanel.dart';
 
 class MylistTile extends StatelessWidget {
@@ -11,12 +8,12 @@ class MylistTile extends StatelessWidget {
       required this.date,
       required this.time,
       required this.notes,
-      required this.index});
+      required this.uuid});
   final double weight;
   final String date;
   final String time;
   final String notes;
-  final int index;
+  final String uuid;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +41,7 @@ class MylistTile extends StatelessWidget {
                 ),
               ],
             ),
-            EditPanel(index: index)
+            EditPanel(uuid: uuid)
           ],
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -57,29 +54,3 @@ class MylistTile extends StatelessWidget {
 
 
 
-// class ConfirmDelete extends StatelessWidget {
-//   final int index;
-//   const ConfirmDelete({super.key, required this.index});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       title: const Text("Delete"),
-//       content: const Text("Are you sure you want to delete the reading ? "),
-//       actions: [
-//         TextButton(
-//             onPressed: () {
-//               final value = context.read<WeightProvider>();
-//               value.delete(value.items[index]);
-//               Navigator.of(context).pop();
-//             },
-//             child: const Text("delete")),
-//         TextButton(
-//             onPressed: () {
-//               Navigator.of(context).pop();
-//             },
-//             child: const Text("cancel")),
-//       ],
-//     );
-//   }
-// }

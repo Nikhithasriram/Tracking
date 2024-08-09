@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/services/auth.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+// import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:tracking_app/utils/loading.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -110,15 +111,4 @@ class _SignInState extends State<SignIn> {
   }
 }
 
-class Loading extends StatelessWidget {
-  const Loading({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: LoadingAnimationWidget.threeRotatingDots(
-          color: Colors.blue, size: 50),
-    );
-  }
-}

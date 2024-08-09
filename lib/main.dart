@@ -4,11 +4,13 @@ import 'package:tracking_app/Provider/dialysisprovider.dart';
 import 'package:tracking_app/Provider/waterprovider.dart';
 import 'package:tracking_app/authentication.dart';
 import 'package:tracking_app/services/auth.dart';
-// import 'pages/bottom_navigation.dart';
-import 'package:tracking_app/Provider/weightprovider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tracking_app/models/weightclass.dart';
+import 'package:tracking_app/services/database.dart';
+// import 'package:tracking_app/Provider/useruid.dart';
+// import 'package:tracking_app/Provider/userprovider.dart';
 // import 'dart:ui';
 
 void main() async {
@@ -26,9 +28,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<User?>.value(value: AuthService().user, initialData: null),
-        ChangeNotifierProvider<WeightProvider>(create: (_) => WeightProvider()),
+        StreamProvider<List<NewWeight>>.value(value: Database().weights, initialData:const []),
+        
+
+        
         ChangeNotifierProvider<WaterProvider>(create: (_) => WaterProvider()),
         ChangeNotifierProvider<DialysisProvier>(create: (_) => DialysisProvier()),
+        // ChangeNotifierProvider<Userprovider>(create: (_) => Userprovider()),
 
       ],
       child: MaterialApp(

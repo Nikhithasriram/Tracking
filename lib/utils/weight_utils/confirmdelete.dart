@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/Provider/weightprovider.dart';
-import 'package:provider/provider.dart';
+import 'package:tracking_app/services/database.dart';
 
 class ConfirmDelete extends StatelessWidget {
-  final int index;
-  const ConfirmDelete({super.key, required this.index});
+  final String uuid;
+  const ConfirmDelete({super.key, required this.uuid});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +13,7 @@ class ConfirmDelete extends StatelessWidget {
       actions: [
         TextButton(
             onPressed: () {
-              final value = context.read<WeightProvider>();
-              value.delete(value.items[index]);
+              Database().delete(uuid: uuid);
               Navigator.of(context).pop();
             },
             child: const Text("delete")),

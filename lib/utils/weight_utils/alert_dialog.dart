@@ -1,12 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracking_app/Provider/weightprovider.dart';
-import 'package:tracking_app/models/weightclass.dart';
-// import 'package:expansion_tile_group/expansion_tile_group.dart';
+import 'package:tracking_app/services/database.dart';
+import 'package:tracking_app/utils/loading.dart';
 
 class MyAlertDialog extends StatefulWidget {
-  final int index;
-  const MyAlertDialog({super.key, this.index = -1});
+  final String uuid;
+  const MyAlertDialog({super.key, this.uuid = ''});
 
   @override
   State<MyAlertDialog> createState() => _MyAlertDialogState();
@@ -18,7 +17,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
   final TextEditingController weightcontroller = TextEditingController();
   final TextEditingController notescontroller = TextEditingController();
 
-  void defaultinitializer() {
+  Future<void> defaultinitializer() async {
     DateTime now = DateTime.now();
     TimeOfDay time = TimeOfDay.now();
     String nowdate =
@@ -34,21 +33,77 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
     notescontroller.clear();
   }
 
+  Future<void> valueinitializer() async {
+    final value = await Database().docValues(uuid: widget.uuid);
+
+    weightcontroller.text = value.weight.toString();
+    datecontroller.text = value.date;
+    timecontroller.text = value.time;
+    notescontroller.text = value.notes;
+  }
+
+  late Future<void> _docvalue;
+
   @override
   void initState() {
-    if (widget.index == -1) {
-      defaultinitializer();
+    if (widget.uuid == '') {
+      _docvalue = defaultinitializer();
     } else {
-      final value = Provider.of<WeightProvider>(context, listen: false);
-      weightcontroller.text = value.items[widget.index].weight.toString();
-      datecontroller.text = value.items[widget.index].date;
-      timecontroller.text = value.items[widget.index].time;
-      notescontroller.text = value.items[widget.index].notes;
+      _docvalue = valueinitializer();
     }
 
     super.initState();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: AlertDialog(
+        scrollable: true,
+        title: Text(widget.uuid == '' ? "New Reading" : "Update Reading"),
+        content: FutureBuilder(
+            future: _docvalue,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Loading();
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                return ContentsOfAlertBox(
+                    weightcontroller: weightcontroller,
+                    datecontroller: datecontroller,
+                    timecontroller: timecontroller,
+                    notescontroller: notescontroller,
+                    widget: widget);
+              } else {
+                return const Loading();
+              }
+            }),
+      ),
+    );
+  }
+}
+
+class ContentsOfAlertBox extends StatefulWidget {
+  const ContentsOfAlertBox({
+    super.key,
+    required this.weightcontroller,
+    required this.datecontroller,
+    required this.timecontroller,
+    required this.notescontroller,
+    required this.widget,
+  });
+
+  final TextEditingController weightcontroller;
+  final TextEditingController datecontroller;
+  final TextEditingController timecontroller;
+  final TextEditingController notescontroller;
+  final MyAlertDialog widget;
+
+  @override
+  State<ContentsOfAlertBox> createState() => _ContentsOfAlertBoxState();
+}
+
+class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
   @override
   Widget build(BuildContext context) {
     Future<void> selectDate() async {
@@ -64,7 +119,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         if (picked != null) {
           String pickedDate =
               "${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}";
-          datecontroller.text = pickedDate;
+          widget.datecontroller.text = pickedDate;
         }
       });
     }
@@ -80,129 +135,118 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
         if (time != null) {
           String min =
               time.minute < 10 ? "0${time.minute}" : time.minute.toString();
-          timecontroller.text =
+          widget.timecontroller.text =
               "${time.hourOfPeriod}:$min ${time.period.toString().split(".")[1]}";
         }
       });
     }
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AlertDialog(
-        scrollable: true,
-        title: Text(widget.index == -1 ? "New Reading" : "Update Reading"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Text("Weight"),
-            TextField(
-              controller: weightcontroller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Weight",
-                suffixIcon: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Text("kg"),
-                ),
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Text("Weight"),
+        TextField(
+          controller: widget.weightcontroller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "Weight",
+            suffixIcon: Padding(
+              padding: EdgeInsets.all(15),
+              child: Text("kg"),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              keyboardType: TextInputType.none,
-              onTap: () {
-                selectDate();
-              },
-              controller: datecontroller,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Date",
-                prefixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              keyboardType: TextInputType.none,
-              controller: timecontroller,
-              onTap: () {
-                selectTime();
-              },
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Time",
-                  prefixIcon: Icon(Icons.access_time)),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            TextField(
-              controller: notescontroller,
-              maxLines: 1,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Notes",
-                  prefixIcon: Icon(Icons.notes)),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FilledButton(
-                  onPressed: () {
-                    final WeightProvider value = context.read<WeightProvider>();
-
-                    if (num.tryParse(weightcontroller.text) == null) {
-                      const SnackBar invalidWeight = SnackBar(
-                        content: Text("Enter a valid weight"),
-                        behavior: SnackBarBehavior.floating,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
-                    } else {
-                      if (widget.index == -1) {
-                        value.add(NewWeight(
-                          weight: double.parse(weightcontroller.text),
-                          date: datecontroller.text,
-                          time: timecontroller.text,
-                          notes: notescontroller.text,
-                        ));
-                        Navigator.of(context).pop();
-                      } else {
-                        NewWeight w = NewWeight(
-                            weight: double.parse(weightcontroller.text),
-                            date: datecontroller.text,
-                            time: timecontroller.text,
-                            notes: notescontroller.text);
-                        value.update(widget.index, w);
-                        Navigator.of(context).pop();
-                      }
-                    }
-                  },
-                  child: Text(
-                    widget.index == -1 ? "Save" : "Update",
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Cancel"))
-              ],
-            )
-          ],
+          ),
         ),
-      ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextField(
+          keyboardType: TextInputType.none,
+          onTap: () {
+            selectDate();
+          },
+          controller: widget.datecontroller,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "Date",
+            prefixIcon: Icon(Icons.calendar_today),
+          ),
+          readOnly: true,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        TextField(
+          keyboardType: TextInputType.none,
+          controller: widget.timecontroller,
+          onTap: () {
+            selectTime();
+          },
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "Time",
+              prefixIcon: Icon(Icons.access_time)),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        TextField(
+          controller: widget.notescontroller,
+          maxLines: 1,
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "Notes",
+              prefixIcon: Icon(Icons.notes)),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FilledButton(
+              onPressed: () {
+                if (num.tryParse(widget.weightcontroller.text) == null) {
+                  const SnackBar invalidWeight = SnackBar(
+                    content: Text("Enter a valid weight"),
+                    behavior: SnackBarBehavior.floating,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
+                } else {
+                  if (widget.widget.uuid == '') {
+                    Database().addWeights(
+                        weight: double.parse(widget.weightcontroller.text),
+                        date: widget.datecontroller.text,
+                        time: widget.timecontroller.text,
+                        notes: widget.notescontroller.text);
+                    Navigator.of(context).pop();
+                  } else {
+                    Database().updatevalue(
+                        uuid: widget.widget.uuid,
+                        weight: double.parse(widget.weightcontroller.text),
+                        date: widget.datecontroller.text,
+                        time: widget.timecontroller.text,
+                        notes: widget.notescontroller.text);
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              child: Text(
+                widget.widget.uuid == '' ? "Save" : "Update",
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"))
+          ],
+        )
+      ],
     );
   }
 }

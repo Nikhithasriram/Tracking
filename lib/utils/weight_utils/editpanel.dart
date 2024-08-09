@@ -1,51 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracking_app/Provider/weightprovider.dart';
+import 'package:tracking_app/services/database.dart';
 import 'package:tracking_app/utils/weight_utils/showdialog.dart';
 import 'package:tracking_app/utils/weight_utils/confirmdelete.dart';
 import 'package:share_plus/share_plus.dart';
 
-// class EditPanel extends StatelessWidget {
-//   final int index;
-//   const EditPanel({super.key, required this.index});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.only(bottom: 7),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//         children: [
-//           IconButton(
-//               onPressed: () {
-//                 createnewElement(context: context, index: index);
-//               },
-//               icon: const Icon(Icons.edit)),
-//           IconButton(
-//               onPressed: () async {
-//                 final value = context.read<WeightProvider>().items[index];
-//                 await Share.share(
-//                     'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
-//               },
-//               icon: const Icon(Icons.share)),
-//           IconButton(
-//               onPressed: () {
-//                 showDialog(
-//                     context: context,
-//                     builder: (context) {
-//                       return ConfirmDelete(index: index);
-//                     });
-//               },
-//               icon: const Icon(Icons.delete)),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 class EditPanel extends StatelessWidget {
-  final int index;
-  const EditPanel({super.key, required this.index});
+  final String uuid;
+  const EditPanel({super.key, required this.uuid});
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +25,15 @@ class EditPanel extends StatelessWidget {
         menuChildren: [
           IconButton(
               onPressed: () {
-                createnewElement(context: context, index: index);
+                createnewElement(context: context, uuid: uuid);
               },
               icon: const Icon(Icons.edit)),
           IconButton(
               onPressed: () async {
-                final value = context.read<WeightProvider>().items[index];
+                final value = await Database().docValues(uuid: uuid);
                 await Share.share(
-                    'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
+                'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
+                
               },
               icon: const Icon(Icons.share)),
           IconButton(
@@ -79,7 +41,7 @@ class EditPanel extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (context) {
-                      return ConfirmDelete(index: index);
+                      return ConfirmDelete(uuid: uuid);
                     });
               },
               icon: const Icon(Icons.delete)),
