@@ -5,8 +5,8 @@ import 'package:tracking_app/utils/water_utils/individual_list_tile.dart';
 
 class WaterListTile extends StatefulWidget {
   final DayWater daily;
-  final int index;
-  const WaterListTile({super.key, required this.daily, required this.index});
+  final String uuid;
+  const WaterListTile({super.key, required this.daily, required this.uuid});
 
   @override
   State<WaterListTile> createState() => _WaterListTileState();
@@ -16,6 +16,11 @@ class _WaterListTileState extends State<WaterListTile> {
   @override
   Widget build(BuildContext context) {
     // print(waterselected);
+    // print(widget.uuid);
+    // print(widget.daily.dayContents[0].uuid);
+    // widget.daily.dayContents.forEach((e) {
+    //   print(e.uuid);
+    // });
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTile(
@@ -38,7 +43,7 @@ class _WaterListTileState extends State<WaterListTile> {
               ),
               IconButton(
                   onPressed: () {
-                    waterdialog(context: context, index: widget.index);
+                    waterdialog(context: context, uuid: widget.uuid);
                   },
                   icon: const Icon(Icons.add))
             ],
@@ -58,18 +63,13 @@ class _WaterListTileState extends State<WaterListTile> {
                     shrinkWrap: true,
                     children: widget.daily.dayContents
                         .map((water) => IndividualListtile(
-                              water: water,
-                              index: widget.index,
-                              daycontentsindex:
-                                  widget.daily.dayContents.indexOf(water),
-                            ))
+                            water: water,
+                            uuid: widget.uuid,
+                            subuuid: water.uuid))
                         .toList(),
                   ),
                 )),
-                
           ]),
     );
   }
 }
-
-

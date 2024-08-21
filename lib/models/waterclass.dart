@@ -6,12 +6,14 @@ class NewWater {
   String date;
   String time;
   String notes;
+  String uuid;
   NewWater({
     required this.value,
     required this.type,
     required this.date,
     required this.time,
     required this.notes,
+    required this.uuid,
   });
 }
 
@@ -24,10 +26,10 @@ class DayWater {
   String uuid;
   List<NewWater> dayContents;
 
-  DayWater({
-    required this.intakeml,
-    required this.outputml,
-    required this.date,
-    required this.dayContents,
-  }) : uuid = const Uuid().v4();
+  DayWater(
+      {required this.intakeml,
+      required this.outputml,
+      required this.date,
+      required this.dayContents,
+      required this.uuid});
 }

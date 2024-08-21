@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/services/database.dart';
+import 'package:tracking_app/services/database_weight.dart';
 import 'package:tracking_app/utils/weight_utils/showdialog.dart';
 import 'package:tracking_app/utils/weight_utils/confirmdelete.dart';
 import 'package:share_plus/share_plus.dart';
@@ -30,10 +30,9 @@ class EditPanel extends StatelessWidget {
               icon: const Icon(Icons.edit)),
           IconButton(
               onPressed: () async {
-                final value = await Database().docValues(uuid: uuid);
+                final value = await DatabaseWeights().docValues(uuid: uuid);
                 await Share.share(
-                'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
-                
+                    'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
               },
               icon: const Icon(Icons.share)),
           IconButton(

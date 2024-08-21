@@ -3,14 +3,16 @@ import 'package:tracking_app/models/weightclass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-class Database {
+class DatabaseWeights {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   Future<void> addWeights(
       {required double weight,
       required String date,
       required String time,
       required String notes}) async {
+    if (_auth.currentUser == null) return;
     await users.doc(_auth.currentUser!.uid).collection('weights').add({
       'uuid': const Uuid().v4(),
       'weight': weight,
@@ -34,6 +36,8 @@ class Database {
 
   // stream of weights
   Stream<List<NewWeight>> get weights {
+    // if (_auth.currentUser == null) return List.empty();
+
     return users
         .doc(_auth.currentUser!.uid)
         .collection('weights')

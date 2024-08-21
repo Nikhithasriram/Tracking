@@ -16,8 +16,10 @@ class _AuthenticationState extends State<Authentication> {
   Widget build(BuildContext context) {
     User? myuser = Provider.of<User?>(context);
     if (myuser == null) {
+      // print("signin");
       return const SignIn();
     } else {
+      // print("bottom nav");
       return const MyBottomNavigation();
     }
   }

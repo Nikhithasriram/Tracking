@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:tracking_app/services/database.dart';
+import 'package:tracking_app/services/database_weight.dart';
 import 'package:tracking_app/utils/loading.dart';
 
 class MyAlertDialog extends StatefulWidget {
@@ -34,7 +34,7 @@ class _MyAlertDialogState extends State<MyAlertDialog> {
   }
 
   Future<void> valueinitializer() async {
-    final value = await Database().docValues(uuid: widget.uuid);
+    final value = await DatabaseWeights().docValues(uuid: widget.uuid);
 
     weightcontroller.text = value.weight.toString();
     datecontroller.text = value.date;
@@ -215,14 +215,14 @@ class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
                   ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
                 } else {
                   if (widget.widget.uuid == '') {
-                    Database().addWeights(
+                    DatabaseWeights().addWeights(
                         weight: double.parse(widget.weightcontroller.text),
                         date: widget.datecontroller.text,
                         time: widget.timecontroller.text,
                         notes: widget.notescontroller.text);
                     Navigator.of(context).pop();
                   } else {
-                    Database().updatevalue(
+                    DatabaseWeights().updatevalue(
                         uuid: widget.widget.uuid,
                         weight: double.parse(widget.weightcontroller.text),
                         date: widget.datecontroller.text,

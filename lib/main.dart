@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/dialysisprovider.dart';
-import 'package:tracking_app/Provider/waterprovider.dart';
+// import 'package:tracking_app/Provider/waterprovider.dart';
 import 'package:tracking_app/authentication.dart';
+import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/services/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tracking_app/models/weightclass.dart';
-import 'package:tracking_app/services/database.dart';
+import 'package:tracking_app/services/database_weight.dart';
+import 'package:tracking_app/services/database_water.dart';
 // import 'package:tracking_app/Provider/useruid.dart';
 // import 'package:tracking_app/Provider/userprovider.dart';
 // import 'dart:ui';
@@ -28,12 +30,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<User?>.value(value: AuthService().user, initialData: null),
-        StreamProvider<List<NewWeight>>.value(value: Database().weights, initialData:const []),
+      
         
 
         
-        ChangeNotifierProvider<WaterProvider>(create: (_) => WaterProvider()),
-        ChangeNotifierProvider<DialysisProvier>(create: (_) => DialysisProvier()),
+        // ChangeNotifierProvider<WaterProvider>(create: (_) => WaterProvider()),
+        // ChangeNotifierProvider<DialysisProvier>(create: (_) => DialysisProvier()),
         // ChangeNotifierProvider<Userprovider>(create: (_) => Userprovider()),
 
       ],

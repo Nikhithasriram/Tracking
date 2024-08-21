@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/services/database.dart';
+import 'package:tracking_app/services/database_weight.dart';
 
 class ConfirmDelete extends StatelessWidget {
   final String uuid;
@@ -13,7 +13,7 @@ class ConfirmDelete extends StatelessWidget {
       actions: [
         TextButton(
             onPressed: () {
-              Database().delete(uuid: uuid);
+              DatabaseWeights().delete(uuid: uuid);
               Navigator.of(context).pop();
             },
             child: const Text("delete")),

@@ -4,16 +4,19 @@ import 'package:tracking_app/utils/water_utils/water_menu.dart';
 
 class IndividualListtile extends StatelessWidget {
   final NewWater water;
-  final int daycontentsindex;
-  final int index;
+  final String subuuid;
+  final String uuid;
   const IndividualListtile(
       {super.key,
       required this.water,
-      required this.index,
-      required this.daycontentsindex});
+      required this.uuid,
+      required this.subuuid});
 
   @override
   Widget build(BuildContext context) {
+    // print("uuid $uuid");
+    // print("subuuid $subuuid");
+
     final String type = water.type == Watertype.intake
         ? "Intake"
         : water.type == Watertype.output
@@ -44,8 +47,8 @@ class IndividualListtile extends StatelessWidget {
             style: const TextStyle(fontSize: 13),
           ),
           WaterMenu(
-            index: index,
-            dailyconentsindex: daycontentsindex,
+            uuid: uuid,
+            subuuid: subuuid,
           )
         ],
       ),

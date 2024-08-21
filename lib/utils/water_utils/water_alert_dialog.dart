@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/waterprovider.dart';
 import 'package:tracking_app/models/waterclass.dart';
+import 'package:tracking_app/services/database_water.dart';
+import 'package:tracking_app/utils/loading.dart';
 // import 'package:tracking_app/models/waterclass.dart';
 
 class WaterAlertDialog extends StatefulWidget {
-  final int index;
-  final int daycontentsindex;
-  const WaterAlertDialog(
-      {super.key, this.index = -1, this.daycontentsindex = -1});
+  final String uuid;
+  final String subuuid;
+  const WaterAlertDialog({super.key, this.uuid = '', this.subuuid = ''});
 
   @override
   State<WaterAlertDialog> createState() => _WaterAlertDialogState();
@@ -22,7 +23,9 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
   TextEditingController timeController = TextEditingController();
   TextEditingController notesController = TextEditingController();
 
-  void defaultInitializer() {
+  late Future<void> _initializer;
+
+  Future<void> defaultInitializer() async {
     DateTime now = DateTime.now();
     TimeOfDay time = TimeOfDay.now();
     String nowdate =
@@ -40,9 +43,11 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
     notesController.clear();
   }
 
-  void dateInitializer() {
-    final value = Provider.of<WaterProvider>(context, listen: false);
-    dateController.text = value.items[widget.index].date;
+  Future<void> dateInitializer() async {
+    // final value = Provider.of<WaterProvider>(context, listen: false);
+    // dateController.text = value.items[widget.index].date;
+    final DayWater value = await DatabaseWater().getwater(uuid: widget.uuid);
+    dateController.text = value.date;
     TimeOfDay time = TimeOfDay.now();
     String min = time.minute < 10 ? "0${time.minute}" : time.minute.toString();
     String nowTime =
@@ -54,10 +59,11 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
     notesController.clear();
   }
 
-  void updateInitializer() {
-    final value = Provider.of<WaterProvider>(context, listen: false);
-    final content =
-        value.items[widget.index].dayContents[widget.daycontentsindex];
+  Future<void> updateInitializer() async {
+    final DayWater value = await DatabaseWater().getwater(uuid: widget.uuid);
+    final content = value.dayContents.firstWhere((newwater) {
+      return newwater.uuid == widget.subuuid;
+    });
     if (content.type == Watertype.intake) {
       intakemlController.text = content.value.toString();
       outputmlController.clear();
@@ -73,7 +79,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
       intakemlController.clear();
     }
 
-    dateController.text = value.items[widget.index].date;
+    dateController.text = value.date;
     timeController.text = content.time;
     notesController.text = content.notes;
   }
@@ -81,67 +87,118 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
   @override
   void initState() {
     // print(widget.daycontentsindex);
-    if (widget.index == -1 && widget.daycontentsindex == -1) {
+    if (widget.uuid == '' && widget.subuuid == '') {
       // print("default");
-      defaultInitializer();
-    } else if (widget.index != -1 && widget.daycontentsindex == -1) {
+      _initializer = defaultInitializer();
+    } else if (widget.uuid != '' && widget.subuuid == '') {
       // print("date");
-      dateInitializer();
-    } else if (widget.daycontentsindex != -1 && widget.index != -1) {
+      _initializer = dateInitializer();
+    } else if (widget.uuid != '' && widget.subuuid != '') {
       // print("eddit");
-      updateInitializer();
+      _initializer = updateInitializer();
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<void> selectDate() async {
-      DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100));
+    return FutureBuilder(
+        future: _initializer,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ContentsAfterFuture(
+                widget: widget,
+                intakemlController: intakemlController,
+                outputmlController: outputmlController,
+                miscmlController: miscmlController,
+                dateController: dateController,
+                timeController: timeController,
+                notesController: notesController);
+          } else {
+            return const Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AlertDialog(
+                content: Loading(),
+              ),
+            );
+          }
+        });
+  }
+}
 
-      // picked ??= DateTime.now();
+class ContentsAfterFuture extends StatefulWidget {
+  const ContentsAfterFuture({
+    super.key,
+    required this.widget,
+    required this.intakemlController,
+    required this.outputmlController,
+    required this.miscmlController,
+    required this.dateController,
+    required this.timeController,
+    required this.notesController,
+  });
 
-      setState(() {
-        if (picked != null) {
-          String pickedDate =
-              "${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}";
-          dateController.text = pickedDate;
-        }
-      });
-    }
+  final WaterAlertDialog widget;
+  final TextEditingController intakemlController;
+  final TextEditingController outputmlController;
+  final TextEditingController miscmlController;
+  final TextEditingController dateController;
+  final TextEditingController timeController;
+  final TextEditingController notesController;
 
-    Future<void> selectTime() async {
-      final TimeOfDay? time = await showTimePicker(
+  @override
+  State<ContentsAfterFuture> createState() => _ContentsAfterFutureState();
+}
+
+class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
+  Future<void> selectDate() async {
+    DateTime? picked = await showDatePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
-        initialEntryMode: TimePickerEntryMode.dial,
-      );
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100));
 
-      setState(() {
-        if (time != null) {
-          String min =
-              time.minute < 10 ? "0${time.minute}" : time.minute.toString();
-          timeController.text =
-              "${time.hourOfPeriod}:$min ${time.period.toString().split(".")[1]}";
-        }
-      });
-    }
+    // picked ??= DateTime.now();
 
+    setState(() {
+      if (picked != null) {
+        String pickedDate =
+            "${picked.day.toString()}-${picked.month.toString()}-${picked.year.toString()}";
+        widget.dateController.text = pickedDate;
+      }
+    });
+  }
+
+  Future<void> selectTime() async {
+    final TimeOfDay? time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+
+    setState(() {
+      if (time != null) {
+        String min =
+            time.minute < 10 ? "0${time.minute}" : time.minute.toString();
+        widget.timeController.text =
+            "${time.hourOfPeriod}:$min ${time.period.toString().split(".")[1]}";
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AlertDialog(
         scrollable: true,
         title: Text(
-            widget.daycontentsindex == -1 ? "New Reading" : "Update Reading"),
+            widget.widget.subuuid == '' ? "New Reading" : "Update Reading"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: intakemlController,
+              controller: widget.intakemlController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
@@ -156,7 +213,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               height: 10,
             ),
             TextField(
-              controller: outputmlController,
+              controller: widget.outputmlController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
@@ -171,7 +228,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               height: 10,
             ),
             TextField(
-              controller: miscmlController,
+              controller: widget.miscmlController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
@@ -189,7 +246,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               onTap: () {
                 selectDate();
               },
-              controller: dateController,
+              controller: widget.dateController,
               keyboardType: TextInputType.none,
               decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.calendar_today),
@@ -203,7 +260,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               onTap: () {
                 selectTime();
               },
-              controller: timeController,
+              controller: widget.timeController,
               keyboardType: TextInputType.none,
               decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.access_time),
@@ -214,7 +271,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               height: 25,
             ),
             TextField(
-              controller: notesController,
+              controller: widget.notesController,
               decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.notes),
                   hintText: "Notes",
@@ -231,27 +288,49 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
             //     backgroundColor:
             //         WidgetStatePropertyAll(Colors.purple.shade200)),
             onPressed: () {
-              final value = context.read<WaterProvider>();
+              // final value = context.read<WaterProvider>();
               final double intakeml =
-                  double.tryParse(intakemlController.text) ?? 0.0;
+                  double.tryParse(widget.intakemlController.text) ?? 0.0;
               final double outputml =
-                  double.tryParse(outputmlController.text) ?? 0.0;
+                  double.tryParse(widget.outputmlController.text) ?? 0.0;
               final double miscml =
-                  double.tryParse(miscmlController.text) ?? 0.0;
-              final String date = dateController.text;
-              final String time = timeController.text;
-              final String notes = notesController.text;
+                  double.tryParse(widget.miscmlController.text) ?? 0.0;
+              final String date = widget.dateController.text;
+              final String time = widget.timeController.text;
+              final String notes = widget.notesController.text;
               if (intakeml == 0.0 && miscml == 0.0 && outputml == 0.0) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text("Enter atleast one valid value"),
                   behavior: SnackBarBehavior.floating,
                 ));
               } else {
-                if (widget.daycontentsindex == -1) {
-                  value.add(intakeml, outputml, miscml, date, time, notes);
+                if (widget.widget.subuuid == '') {
+                  DatabaseWater().addWater(
+                      intakeml: intakeml,
+                      outputml: outputml,
+                      miscml: miscml,
+                      date: date,
+                      time: time,
+                      notes: notes);
+                  // value.add(intakeml, outputml, miscml, date, time, notes);
                 } else {
-                  value.delete(widget.index, widget.daycontentsindex);
-                  value.add(intakeml, outputml, miscml, date, time, notes);
+                  // value.delete(widget.index, widget.daycontentsindex);
+                  DatabaseWater().updatewater(
+                      intakeml: intakeml,
+                      outputml: outputml,
+                      miscml: miscml,
+                      date: date,
+                      time: time,
+                      notes: notes,
+                      subuuid: widget.widget.subuuid);
+                  // //todo delete
+                  // DatabaseWater().addWater(
+                  //     intakeml: intakeml,
+                  //     outputml: outputml,
+                  //     miscml: miscml,
+                  //     date: date,
+                  //     time: time,
+                  //     notes: notes);
                 }
 
                 Navigator.of(context).pop();
@@ -260,7 +339,7 @@ class _WaterAlertDialogState extends State<WaterAlertDialog> {
               // print(value.items);
             },
             child: Text(
-              widget.daycontentsindex == -1 ? "Save" : "Update",
+              widget.widget.subuuid == '' ? "Save" : "Update",
             ),
           ),
           TextButton(

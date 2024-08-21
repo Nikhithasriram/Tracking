@@ -7,9 +7,9 @@ import 'package:tracking_app/utils/dialysis_utils/dialysisdialog.dart';
 import 'package:share_plus/share_plus.dart';
 
 class DialysisTile extends StatelessWidget {
-  final int index;
+  final String uuid;
   final DialysisReading reading;
-  const DialysisTile({super.key, required this.index, required this.reading});
+  const DialysisTile({super.key, required this.uuid, required this.reading});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class DialysisTile extends StatelessWidget {
             ),
             IconButton(
                 onPressed: () {
-                  dialysisdialog(context: context, index: index);
+                  dialysisdialog(context: context, uuid: uuid);
                 },
                 icon: const Icon(Icons.add))
           ],
@@ -48,8 +48,8 @@ class DialysisTile extends StatelessWidget {
                   children: reading.session
                       .map((r) => DialysisIndividualTile(
                             onesessionreadings: r,
-                            subindex: reading.session.indexOf(r),
-                            index: index,
+                            subuuid: r.uuid,
+                            uuid: uuid,
                           ))
                       .toList(),
                 ),
@@ -62,13 +62,13 @@ class DialysisTile extends StatelessWidget {
 
 class DialysisIndividualTile extends StatelessWidget {
   final Onesession onesessionreadings;
-  final int index;
-  final int subindex;
+  final String uuid;
+  final String subuuid;
   const DialysisIndividualTile(
       {super.key,
       required this.onesessionreadings,
-      required this.subindex,
-      required this.index});
+      required this.uuid,
+      required this.subuuid});
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +88,9 @@ class DialysisIndividualTile extends StatelessWidget {
             // const SizedBox(
             //   width: 4,
             // ),
-            Text(
-              (subindex + 1).toString(),
+            const Text(
+              "h",
+              //TODO (subindex + 1).toString(),
               style: const TextStyle(fontSize: 14),
             ),
           ],
@@ -137,8 +138,8 @@ class DialysisIndividualTile extends StatelessWidget {
             ],
           ),
           DialysisMenu(
-            index: index,
-            subindex: subindex,
+            uuid: uuid,
+            subuuid: subuuid,
           )
         ],
       ),
@@ -147,9 +148,9 @@ class DialysisIndividualTile extends StatelessWidget {
 }
 
 class DialysisMenu extends StatelessWidget {
-  final int index;
-  final int subindex;
-  const DialysisMenu({super.key, required this.index, required this.subindex});
+  final String uuid;
+  final String subuuid;
+  const DialysisMenu({super.key, required this.uuid, required this.subuuid});
 
   @override
   Widget build(BuildContext context) {
@@ -168,18 +169,18 @@ class DialysisMenu extends StatelessWidget {
       menuChildren: [
         IconButton(
             onPressed: () {
-              dialysisdialog(
-                  context: context, index: index, subindex: subindex);
+              dialysisdialog(context: context, uuid: uuid, subuuid: subuuid);
             },
             icon: const Icon(Icons.edit)),
         IconButton(
             onPressed: () async {
-              final value = context
-                  .read<DialysisProvier>()
-                  .items[index]
-                  .session[subindex];
-              await Share.share(
-                  "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.subnet} \nDate: ${value.date} \nTime: ${value.time}");
+              //TODO share
+              // final value = context
+              //     .read<DialysisProvier>()
+              //     .items[index]
+              //     .session[subindex];
+              // await Share.share(
+              //     "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.subnet} \nDate: ${value.date} \nTime: ${value.time}");
             },
             icon: const Icon(Icons.share)),
         IconButton(
@@ -187,8 +188,7 @@ class DialysisMenu extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return DialysisConfirmDelete(
-                      index: index, subindex: subindex);
+                  return DialysisConfirmDelete(uuid: uuid, subuuid: subuuid);
                 },
               );
             },

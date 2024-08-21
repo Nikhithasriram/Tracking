@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracking_app/Provider/dialysisprovider.dart';
-import 'package:tracking_app/models/dialysis.dart';
+// import 'package:provider/provider.dart';
+// import 'package:tracking_app/Provider/dialysisprovider.dart';
+// import 'package:tracking_app/models/dialysis.dart';
+import 'package:tracking_app/services/database_dialysis.dart';
 
 class DialysisAlertDialog extends StatefulWidget {
-  final int index;
-  final int subindex;
-  const DialysisAlertDialog({super.key, this.index = -1, this.subindex = -1});
+  final String uuid;
+  final String subuuid;
+  const DialysisAlertDialog({super.key, this.uuid = "", this.subuuid = ""});
 
   @override
   State<DialysisAlertDialog> createState() => _DialysisAlertDialogState();
@@ -36,9 +37,10 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
   }
 
   void samedateInitailizer() {
-    final DialysisProvier value =
-        Provider.of<DialysisProvier>(context, listen: false);
-    datecontroller.text = value.items[widget.index].date;
+    //TODO date
+    // final DialysisProvier value =
+    //     Provider.of<DialysisProvier>(context, listen: false);
+    // datecontroller.text = value.items[widget.index].date;
     TimeOfDay time = TimeOfDay.now();
     String min = time.minute < 10 ? "0${time.minute}" : time.minute.toString();
 
@@ -51,26 +53,27 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
   }
 
   void editInitializer() {
-    final DialysisProvier value =
-        Provider.of<DialysisProvier>(context, listen: false);
-    inmlcontroller.text =
-        value.items[widget.index].session[widget.subindex].inml.toString();
-    outmlcontroller.text =
-        value.items[widget.index].session[widget.subindex].outml.toString();
-    datecontroller.text =
-        value.items[widget.index].session[widget.subindex].date;
+    //TODO edit
+    // final DialysisProvier value =
+    //     Provider.of<DialysisProvier>(context, listen: false);
+    // inmlcontroller.text =
+    //     value.items[widget.index].session[widget.subindex].inml.toString();
+    // outmlcontroller.text =
+    //     value.items[widget.index].session[widget.subindex].outml.toString();
+    // datecontroller.text =
+    //     value.items[widget.index].session[widget.subindex].date;
 
-    timecontroller.text =
-        value.items[widget.index].session[widget.subindex].time;
-    notescontroller.text =
-        value.items[widget.index].session[widget.subindex].notes;
+    // timecontroller.text =
+    //     value.items[widget.index].session[widget.subindex].time;
+    // notescontroller.text =
+    //     value.items[widget.index].session[widget.subindex].notes;
   }
 
   @override
   void initState() {
-    if (widget.index == -1 && widget.subindex == -1) {
+    if (widget.uuid == "" && widget.subuuid == "") {
       defaultInitializer();
-    } else if (widget.index != -1 && widget.subindex == -1) {
+    } else if (widget.uuid != "" && widget.subuuid == "") {
       samedateInitailizer();
     } else {
       editInitializer();
@@ -119,7 +122,7 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AlertDialog(
-        title: widget.subindex != -1
+        title: widget.subuuid == ""
             ? const Text("New Session Reading")
             : const Text("Edit session reading"),
         scrollable: true,
@@ -199,7 +202,7 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
         actions: [
           FilledButton(
               onPressed: () {
-                final value = context.read<DialysisProvier>();
+                // final value = context.read<DialysisProvier>();
                 final inml = double.tryParse(inmlcontroller.text) ?? 0.0;
                 final outml = double.tryParse(outmlcontroller.text) ?? 0.0;
                 if (inml == 0.0 && outml == 0.0) {
@@ -208,24 +211,24 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
                     behavior: SnackBarBehavior.floating,
                   ));
                 } else {
-                  if (widget.subindex != -1) {
-                    value.delete(
-                        index: widget.index, subindex: widget.subindex);
-                    value.add(Onesession(
-                        inml: inml,
-                        outml: outml,
-                        date: datecontroller.text,
-                        time: timecontroller.text,
-                        sessionnet: 0,
-                        notes: notescontroller.text));
+                  if (widget.subuuid != "") {
+                    //TODO update
+                    // value.delete(
+                    //     index: widget.index, subindex: widget.subindex);
+                    // value.add(Onesession(
+                    //     inml: inml,
+                    //     outml: outml,
+                    //     date: datecontroller.text,
+                    //     time: timecontroller.text,
+                    //     sessionnet: 0,
+                    //     notes: notescontroller.text));
                   } else {
-                    value.add(Onesession(
+                    DatabaseDialysis().add(
                         inml: inml,
                         outml: outml,
                         date: datecontroller.text,
                         time: timecontroller.text,
-                        sessionnet: 0,
-                        notes: notescontroller.text));
+                        notes: notescontroller.text);
                   }
 
                   Navigator.of(context).pop();

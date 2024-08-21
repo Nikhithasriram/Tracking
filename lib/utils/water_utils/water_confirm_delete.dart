@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracking_app/Provider/waterprovider.dart';
+// import 'package:provider/provider.dart';
+// import 'package:tracking_app/Provider/waterprovider.dart';
+import 'package:tracking_app/services/database_water.dart';
 
 class WaterConfirmDelete extends StatelessWidget {
-  final int index;
-  final int dailycontentsindex;
+  final String uuid;
+  final String subuuid;
 
   const WaterConfirmDelete(
-      {super.key, required this.index, required this.dailycontentsindex});
+      {super.key, required this.uuid, required this.subuuid});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +17,12 @@ class WaterConfirmDelete extends StatelessWidget {
       content: const Text("Are you sure you want to delete the reading ? "),
       actions: [
         TextButton(
-            onPressed: () {
-              context.read<WaterProvider>().delete(index, dailycontentsindex);
+            onPressed: () async {
+              // context.read<WaterProvider>().delete(index, dailycontentsindex);
+              //todo delete
+
+              await DatabaseWater().delete(uuid: uuid, subuuid: subuuid);
+              if (!context.mounted) return;
               Navigator.of(context).pop();
             },
             child: const Text("delete")),

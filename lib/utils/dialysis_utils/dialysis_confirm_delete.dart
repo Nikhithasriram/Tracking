@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/Provider/dialysisprovider.dart';
-import 'package:provider/provider.dart';
+// import 'package:tracking_app/Provider/dialysisprovider.dart';
+// import 'package:provider/provider.dart';
 
 class DialysisConfirmDelete extends StatelessWidget {
-  final int subindex;
-  final int index;
-  const DialysisConfirmDelete({super.key, required this.index , required this.subindex});
+  final String subuuid;
+  final String uuid;
+  const DialysisConfirmDelete({super.key, required this.uuid , required this.subuuid});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,9 @@ class DialysisConfirmDelete extends StatelessWidget {
       actions: [
         TextButton(
             onPressed: () {
-              final value = context.read<DialysisProvier>();
-              value.delete(index: index, subindex: subindex);
+              //TODO delete
+              // final value = context.read<DialysisProvier>();
+              // value.delete(index: index, subindex: subindex);
               Navigator.of(context).pop();
             },
             child: const Text("delete")),
