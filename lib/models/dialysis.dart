@@ -1,14 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DialysisReading {
   double netml;
   String date;
   List<Onesession> session;
   String uuid;
+  Timestamp sortingtimestamp;
 
   DialysisReading(
       {required this.netml,
       required this.date,
       required this.session,
-      required this.uuid});
+      required this.uuid,
+      required this.sortingtimestamp});
 }
 
 class Onesession {

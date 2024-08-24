@@ -19,16 +19,64 @@ class DatabaseDialysis {
   final String _sessionnet = "sessionnet";
   final String _notes = "notes";
   final String _uuid = "uuid";
+  final String _sortingTimestamp = "sortingtimestamp";
 
   Stream<List<DialysisReading>> get dialysis {
     return users
         .doc(_auth.currentUser!.uid)
         .collection('PD')
+        .orderBy(_sortingTimestamp, descending: true)
         .snapshots()
         .map(_convertoDialysisReading)
         .handleError((e) {
       print(e);
     });
+  }
+
+  Future<DialysisReading?> pdreading({required String uuid}) async {
+    final pd = users.doc(_auth.currentUser!.uid).collection('PD');
+    final sameuuid = await pd.where(_uuid, isEqualTo: uuid).get();
+    final docsnapshots = sameuuid.docs;
+    // print("nice");
+    if (docsnapshots.isNotEmpty) {
+      String docid = docsnapshots[0].id;
+      // print("nice1");
+
+      final reading = await pd.doc(docid).get();
+      // print(reading[_session]);
+      return DialysisReading(
+          netml: reading[_netml],
+          date: reading[_date],
+          session: _convertToOneSession(reading[_session]),
+          uuid: uuid,
+          sortingtimestamp: reading[_sortingTimestamp]);
+    }
+    return null;
+  }
+
+  Future<Onesession?> onesessionreading(
+      {required String uuid, required String subuuid}) async {
+    final pd = users.doc(_auth.currentUser!.uid).collection('PD');
+    final sameuuid = await pd.where(_uuid, isEqualTo: uuid).get();
+    final docsnapshots = sameuuid.docs;
+    if (docsnapshots.isNotEmpty) {
+      String docid = docsnapshots[0].id;
+      final reading = await pd.doc(docid).get();
+      final session = reading[_session];
+      for (var i in session) {
+        if (i[_uuid] == subuuid) {
+          return Onesession(
+              inml: (i[_inml] as num).toDouble(),
+              outml: (i[_outml] as num).toDouble(),
+              date: i[_date],
+              time: i[_time],
+              sessionnet: (i[_sessionnet] as num).toDouble(),
+              notes: i[_notes],
+              uuid: subuuid);
+        }
+      }
+    }
+    return null;
   }
 
   Future<void> add({
@@ -68,6 +116,7 @@ class DatabaseDialysis {
         _netml: 0,
         _date: date,
         _uuid: const Uuid().v4(),
+        _sortingTimestamp: Timestamp.fromDate(mydatetime(date, "1:00 pm")),
         _session: [
           {
             _inml: inml,
@@ -75,10 +124,67 @@ class DatabaseDialysis {
             _time: time,
             _uuid: const Uuid().v4(),
             _notes: notes,
-            _date:date,
+            _date: date,
             _sessionnet: 0,
           }
         ]
+      });
+    }
+  }
+
+  Future<void> delete({required String uuid, required String subuuid}) async {
+    final pd = users.doc(_auth.currentUser!.uid).collection('PD');
+    final samedate = await pd.where(_uuid, isEqualTo: uuid).get();
+    final samedatedocs = samedate.docs;
+    if (samedatedocs.isNotEmpty) {
+      final docid = samedatedocs.first.id;
+      final doc = await pd.doc(docid).get();
+      final sessionmap = doc[_session];
+      final newsessionmap = sessionmap.where((e) {
+        return e[_uuid] != subuuid;
+      }).toList();
+      for (int i = 1; i < newsessionmap.length; i++) {
+        newsessionmap[i][_sessionnet] =
+            newsessionmap[i][_outml] - newsessionmap[i - 1][_inml];
+      }
+      newsessionmap[0][_sessionnet] = 0;
+      double newnetml = 0;
+      for (var i in newsessionmap) {
+        newnetml = newnetml + i[_sessionnet];
+      }
+      pd.doc(docid).update({
+        _netml: newnetml,
+        _session: newsessionmap,
+      });
+    }
+  }
+
+  Future<void> update(
+      {required String uuid,
+      required String subuuid,
+      required Onesession reading}) async {
+    final pd = users.doc(_auth.currentUser!.uid).collection('PD');
+    final samedate = await pd.where(_uuid, isEqualTo: uuid).get();
+    final samedatedocs = samedate.docs;
+    if (samedatedocs.isNotEmpty) {
+      final docid = samedatedocs.first.id;
+      final doc = await pd.doc(docid).get();
+      final sessionmap = doc[_session];
+      var newsessionmap = sessionmap.where((e) {
+        return e[_uuid] != subuuid;
+      }).toList();
+      for (int i = 1; i < newsessionmap.length; i++) {
+        newsessionmap[i][_sessionnet] =
+            newsessionmap[i][_outml] - newsessionmap[i - 1][_inml];
+      }
+      newsessionmap = _addaccordingtotime(newsessionmap, reading);
+      double newnetml = 0;
+      for (var i in newsessionmap) {
+        newnetml = newnetml + i[_sessionnet];
+      }
+      pd.doc(docid).update({
+        _netml: newnetml,
+        _session: newsessionmap,
       });
     }
   }
@@ -89,14 +195,15 @@ class DatabaseDialysis {
           netml: (e.get(_netml) as num).toDouble(),
           date: e.get(_date),
           session: _convertToOneSession(e.get(_session)),
-          uuid: e.get(_uuid));
+          uuid: e.get(_uuid),
+          sortingtimestamp: e.get(_sortingTimestamp));
     }).toList();
   }
 
   List<Onesession> _convertToOneSession(List onesession) {
     return onesession.map((e) {
       return Onesession(
-          inml: (e[_inml] as num).toDouble() ,
+          inml: (e[_inml] as num).toDouble(),
           outml: (e[_outml] as num).toDouble(),
           date: e[_date],
           time: e[_time],
@@ -125,64 +232,75 @@ class DatabaseDialysis {
     final onesessionarray = _convertToOneSession(onesession);
     DateTime readingdatetime = mydatetime(reading.date, reading.time);
     bool added = false;
-    for (int i = onesessionarray.length - 1; i >= 0; i--) {
-      DateTime loopdatetime =
-          mydatetime(onesessionarray[i].date, onesessionarray[i].time);
-      if (readingdatetime.isAfter(loopdatetime) ||
-          readingdatetime == loopdatetime) {
-        added = true;
-        double sessionnet = reading.outml - onesessionarray[i].inml;
-        if (i == onesessionarray.length - 1) {
-          onesessionarray.add(Onesession(
-              inml: reading.inml,
-              outml: reading.outml,
-              date: reading.date,
-              time: reading.time,
-              sessionnet: sessionnet,
-              notes: reading.notes,
-              uuid: reading.uuid));
-          // _items[index].netml += sessionnet;
-        } else {
+    if (onesessionarray.isEmpty) {
+      added = true;
+      onesessionarray.add(Onesession(
+          inml: reading.inml,
+          outml: reading.outml,
+          date: reading.date,
+          time: reading.time,
+          sessionnet: 0,
+          notes: reading.notes,
+          uuid: reading.uuid));
+    }
+    if (added == false) {
+      for (int i = 0; i < onesessionarray.length - 1; i++) {
+        DateTime loopdatetime =
+            mydatetime(onesessionarray[i].date, onesessionarray[i].time);
+        DateTime nextloopdatetime = mydatetime(
+            onesessionarray[i + 1].date, onesessionarray[i + 1].time);
+        if (readingdatetime == loopdatetime) {
+          print("something in going onnnn");
+          added = true;
           onesessionarray.insert(
-              i + 1,
-              Onesession(
-                  inml: reading.inml,
-                  outml: reading.outml,
-                  date: reading.date,
-                  time: reading.time,
-                  sessionnet: sessionnet,
-                  notes: reading.notes,
-                  uuid: reading.uuid));
-          // _items[index].netml += sessionnet;
+            i + 1,
+            Onesession(
+                inml: reading.inml,
+                outml: reading.outml,
+                date: reading.date,
+                time: reading.time,
+                sessionnet: 0,
+                notes: reading.notes,
+                uuid: reading.uuid),
+          );
+          break;
+        } else if ((readingdatetime.isAfter(loopdatetime) &&
+            readingdatetime.isBefore(nextloopdatetime))) {
+          // double sessionnet = reading.outml - onesessionarray[i].inml;
+          print("something");
+          added = true;
+          onesessionarray.insert(
+            i + 1,
+            Onesession(
+                inml: reading.inml,
+                outml: reading.outml,
+                date: reading.date,
+                time: reading.time,
+                sessionnet: 0,
+                notes: reading.notes,
+                uuid: reading.uuid),
+          );
+          break;
         }
-
-        break;
       }
     }
     if (added == false) {
-      if (onesessionarray.isEmpty) {
-        onesessionarray.add(Onesession(
-            inml: reading.inml,
-            outml: reading.outml,
-            date: reading.date,
-            time: reading.time,
-            sessionnet: 0,
-            notes: reading.notes,
-            uuid: reading.uuid));
-        // _items[index].netml += 0;
-      } else {
-        double sessionnet = reading.outml - onesessionarray[-2].inml;
-        onesessionarray.add(Onesession(
-            inml: reading.inml,
-            outml: reading.outml,
-            date: reading.date,
-            time: reading.time,
-            sessionnet: sessionnet,
-            notes: reading.notes,
-            uuid: reading.uuid));
-        // _items[index].netml += sessionnet;
-      }
+      added = true;
+      // double sessionnet = reading.outml - onesessionarray[0].inml;
+      onesessionarray.add(Onesession(
+          inml: reading.inml,
+          outml: reading.outml,
+          date: reading.date,
+          time: reading.time,
+          sessionnet: 0,
+          notes: reading.notes,
+          uuid: reading.uuid));
     }
+    for (int i = 1; i < onesessionarray.length; i++) {
+      onesessionarray[i].sessionnet =
+          onesessionarray[i].outml - onesessionarray[i - 1].inml;
+    }
+    onesessionarray[0].sessionnet = 0;
     return _converttomap(onesessionarray);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/Provider/dialysisprovider.dart';
 import 'package:tracking_app/models/dialysis.dart';
+import 'package:tracking_app/services/database_dialysis.dart';
 import 'package:tracking_app/utils/dialysis_utils/dialysis_confirm_delete.dart';
 import 'package:tracking_app/utils/dialysis_utils/dialysisdialog.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,6 +14,7 @@ class DialysisTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int i = 1;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTile(
@@ -41,7 +43,7 @@ class DialysisTile extends StatelessWidget {
         ),
         children: [
           ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 200),
+              constraints: const BoxConstraints(maxHeight: 220),
               child: Scrollbar(
                 child: ListView(
                   shrinkWrap: true,
@@ -50,6 +52,7 @@ class DialysisTile extends StatelessWidget {
                             onesessionreadings: r,
                             subuuid: r.uuid,
                             uuid: uuid,
+                            index: i++,
                           ))
                       .toList(),
                 ),
@@ -64,11 +67,14 @@ class DialysisIndividualTile extends StatelessWidget {
   final Onesession onesessionreadings;
   final String uuid;
   final String subuuid;
+  final int index;
+
   const DialysisIndividualTile(
       {super.key,
       required this.onesessionreadings,
       required this.uuid,
-      required this.subuuid});
+      required this.subuuid,
+      required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +94,8 @@ class DialysisIndividualTile extends StatelessWidget {
             // const SizedBox(
             //   width: 4,
             // ),
-            const Text(
-              "h",
-              //TODO (subindex + 1).toString(),
+            Text(
+              index.toString(),
               style: const TextStyle(fontSize: 14),
             ),
           ],
@@ -174,13 +179,16 @@ class DialysisMenu extends StatelessWidget {
             icon: const Icon(Icons.edit)),
         IconButton(
             onPressed: () async {
-              //TODO share
+              final value = await DatabaseDialysis()
+                  .onesessionreading(uuid: uuid, subuuid: subuuid);
               // final value = context
               //     .read<DialysisProvier>()
               //     .items[index]
               //     .session[subindex];
-              // await Share.share(
-              //     "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.subnet} \nDate: ${value.date} \nTime: ${value.time}");
+              if (value != null) {
+                await Share.share(
+                    "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.sessionnet} \nDate: ${value.date} \nTime: ${value.time}");
+              }
             },
             icon: const Icon(Icons.share)),
         IconButton(

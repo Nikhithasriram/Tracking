@@ -1,4 +1,5 @@
-import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:uuid/uuid.dart';
 
 class NewWater {
   double value;
@@ -14,6 +15,7 @@ class NewWater {
     required this.time,
     required this.notes,
     required this.uuid,
+    
   });
 }
 
@@ -25,11 +27,12 @@ class DayWater {
   String date;
   String uuid;
   List<NewWater> dayContents;
-
+  Timestamp sortingtimestamp;
   DayWater(
       {required this.intakeml,
       required this.outputml,
       required this.date,
       required this.dayContents,
-      required this.uuid});
+      required this.uuid,
+      required this.sortingtimestamp,});
 }
