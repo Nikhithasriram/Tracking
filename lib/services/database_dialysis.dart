@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
-import 'package:tracking_app/models/dialysis.dart';
+import 'package:tracking_app/models/dialysisclass.dart';
 import 'package:uuid/uuid.dart';
 import 'package:tracking_app/functions/mydatetime.dart';
 
@@ -250,7 +250,7 @@ class DatabaseDialysis {
         DateTime nextloopdatetime = mydatetime(
             onesessionarray[i + 1].date, onesessionarray[i + 1].time);
         if (readingdatetime == loopdatetime) {
-          print("something in going onnnn");
+          // print("something in going onnnn");
           added = true;
           onesessionarray.insert(
             i + 1,
@@ -267,7 +267,7 @@ class DatabaseDialysis {
         } else if ((readingdatetime.isAfter(loopdatetime) &&
             readingdatetime.isBefore(nextloopdatetime))) {
           // double sessionnet = reading.outml - onesessionarray[i].inml;
-          print("something");
+          // print("something");
           added = true;
           onesessionarray.insert(
             i + 1,

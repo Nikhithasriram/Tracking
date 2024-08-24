@@ -17,7 +17,7 @@ class DialysisConfirmDelete extends StatelessWidget {
       actions: [
         TextButton(
             onPressed: () {
-              // TODO : delete
+              
               // final value = context.read<DialysisProvier>();
               // value.delete(index: index, subindex: subindex);
               DatabaseDialysis().delete(uuid: uuid, subuuid: subuuid);

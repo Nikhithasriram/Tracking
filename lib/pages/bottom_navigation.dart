@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tracking_app/models/dialysis.dart';
+import 'package:tracking_app/models/dialysisclass.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/models/weightclass.dart';
 import 'package:tracking_app/services/database_dialysis.dart';
@@ -27,7 +27,7 @@ class _MyBottomNavigationState extends State<MyBottomNavigation> {
       providers: [
           StreamProvider<List<NewWeight>>.value(value: DatabaseWeights().weights, initialData:const []),
         StreamProvider<List<DayWater>>.value(value: DatabaseWater().waters, initialData:const []),
-        StreamProvider<List<DialysisReading>>.value(value: DatabaseDialysis().dialysis, initialData: []),
+        StreamProvider<List<DialysisReading>>.value(value: DatabaseDialysis().dialysis, initialData:const []),
 
       ],
       child: Scaffold(

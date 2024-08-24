@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tracking_app/Provider/waterprovider.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/services/database_water.dart';
 import 'package:tracking_app/utils/loading.dart';

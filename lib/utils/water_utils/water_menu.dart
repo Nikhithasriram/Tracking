@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/services/database_water.dart';
 import 'package:tracking_app/utils/water_utils/waterdialog.dart';
-import 'package:tracking_app/Provider/waterprovider.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tracking_app/utils/water_utils/water_confirm_delete.dart';
 
@@ -45,7 +43,7 @@ class WaterMenu extends StatelessWidget {
                     : value.type == Watertype.output
                         ? "output"
                         : "misc";
-                print("valueeeee is $value");
+                // print("valueeeee is $value");
                 await Share.share(
                     '$text: ${value.value}ml \ndate: ${value.date} \ntime: ${value.time}');
                 //todo implement share

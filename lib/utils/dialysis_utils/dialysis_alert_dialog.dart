@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/models/dialysis.dart';
+import 'package:tracking_app/models/dialysisclass.dart';
 // import 'package:provider/provider.dart';
 // import 'package:tracking_app/Provider/dialysisprovider.dart';
 // import 'package:tracking_app/models/dialysis.dart';
