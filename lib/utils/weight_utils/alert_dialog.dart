@@ -104,6 +104,8 @@ class ContentsOfAlertBox extends StatefulWidget {
 }
 
 class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     Future<void> selectDate() async {
@@ -141,112 +143,116 @@ class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
       });
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Text("Weight"),
-        TextField(
-          controller: widget.weightcontroller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "Weight",
-            suffixIcon: Padding(
-              padding: EdgeInsets.all(15),
-              child: Text("kg"),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        TextField(
-          keyboardType: TextInputType.none,
-          onTap: () {
-            selectDate();
-          },
-          controller: widget.datecontroller,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "Date",
-            prefixIcon: Icon(Icons.calendar_today),
-          ),
-          readOnly: true,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        TextField(
-          keyboardType: TextInputType.none,
-          controller: widget.timecontroller,
-          onTap: () {
-            selectTime();
-          },
-          decoration: const InputDecoration(
+    return Form(
+      key: _formkey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Text("Weight"),
+          TextFormField(
+            validator: (value) {
+              if (double.tryParse(widget.weightcontroller.text) == null) {
+                return "Enter valid value";
+              }
+              return null;
+            },
+            controller: widget.weightcontroller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
-              hintText: "Time",
-              prefixIcon: Icon(Icons.access_time)),
-        ),
-        const SizedBox(
-          height: 30,
-        ),
-        TextField(
-          controller: widget.notescontroller,
-          maxLines: 1,
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Notes",
-              prefixIcon: Icon(Icons.notes)),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FilledButton(
-              onPressed: () {
-                if (num.tryParse(widget.weightcontroller.text) == null) {
-                  const SnackBar invalidWeight = SnackBar(
-                    content: Text("Enter a valid weight"),
-                    behavior: SnackBarBehavior.floating,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(invalidWeight);
-                } else {
-                  if (widget.widget.uuid == '') {
-                    DatabaseWeights().addWeights(
-                        weight: double.parse(widget.weightcontroller.text),
-                        date: widget.datecontroller.text,
-                        time: widget.timecontroller.text,
-                        notes: widget.notescontroller.text);
-                    Navigator.of(context).pop();
-                  } else {
-                    DatabaseWeights().updatevalue(
-                        uuid: widget.widget.uuid,
-                        weight: double.parse(widget.weightcontroller.text),
-                        date: widget.datecontroller.text,
-                        time: widget.timecontroller.text,
-                        notes: widget.notescontroller.text);
-                    Navigator.of(context).pop();
-                  }
-                }
-              },
-              child: Text(
-                widget.widget.uuid == '' ? "Save" : "Update",
+              hintText: "Weight",
+              suffixIcon: Padding(
+                padding: EdgeInsets.all(15),
+                child: Text("kg"),
               ),
             ),
-            const SizedBox(
-              width: 5,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormField(
+            keyboardType: TextInputType.none,
+            onTap: () {
+              selectDate();
+            },
+            controller: widget.datecontroller,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "Date",
+              prefixIcon: Icon(Icons.calendar_today),
             ),
-            TextButton(
+            readOnly: true,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextFormField(
+            keyboardType: TextInputType.none,
+            controller: widget.timecontroller,
+            onTap: () {
+              selectTime();
+            },
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Time",
+                prefixIcon: Icon(Icons.access_time)),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          TextFormField(
+            controller: widget.notescontroller,
+            maxLines: 1,
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Notes",
+                prefixIcon: Icon(Icons.notes)),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  if (_formkey.currentState!.validate()) {
+                    // print("Validates");
+                    if (widget.widget.uuid == '') {
+                      DatabaseWeights().addWeights(
+                          weight: double.parse(widget.weightcontroller.text),
+                          date: widget.datecontroller.text,
+                          time: widget.timecontroller.text,
+                          notes: widget.notescontroller.text);
+                      Navigator.of(context).pop();
+                    } else {
+                      DatabaseWeights().updatevalue(
+                          uuid: widget.widget.uuid,
+                          weight: double.parse(widget.weightcontroller.text),
+                          date: widget.datecontroller.text,
+                          time: widget.timecontroller.text,
+                          notes: widget.notescontroller.text);
+                      Navigator.of(context).pop();
+                    }
+                  }
                 },
-                child: const Text("Cancel"))
-          ],
-        )
-      ],
+                child: Text(
+                  widget.widget.uuid == '' ? "Save" : "Update",
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel"))
+            ],
+          )
+        ],
+      ),
     );
   }
 }

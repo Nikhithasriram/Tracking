@@ -29,10 +29,22 @@ class DatabaseDialysis {
         .snapshots()
         .map(_convertoDialysisReading)
         .handleError((e) {
-      print(e);
+      // print(e);
     });
   }
 
+  Future<List<DialysisReading>> dialysisReadingBetweenDates(
+      DateTime start, DateTime end) async {
+    final betweendatesdocs = await users
+        .doc(_auth.currentUser!.uid)
+        .collection('PD')
+        .where(_sortingTimestamp,
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where(_sortingTimestamp, isLessThanOrEqualTo: Timestamp.fromDate(end))
+        .orderBy(_sortingTimestamp , )
+        .get();
+    return _convertoDialysisReading(betweendatesdocs);
+  }
   Future<DialysisReading?> pdreading({required String uuid}) async {
     final pd = users.doc(_auth.currentUser!.uid).collection('PD');
     final sameuuid = await pd.where(_uuid, isEqualTo: uuid).get();
@@ -147,15 +159,21 @@ class DatabaseDialysis {
         newsessionmap[i][_sessionnet] =
             newsessionmap[i][_outml] - newsessionmap[i - 1][_inml];
       }
-      newsessionmap[0][_sessionnet] = 0;
+      if (newsessionmap.length > 0) {
+        newsessionmap[0][_sessionnet] = 0;
+      }
       double newnetml = 0;
       for (var i in newsessionmap) {
         newnetml = newnetml + i[_sessionnet];
       }
-      pd.doc(docid).update({
-        _netml: newnetml,
-        _session: newsessionmap,
-      });
+      if (newsessionmap.length == 0) {
+        await pd.doc(docid).delete();
+      } else {
+        pd.doc(docid).update({
+          _netml: newnetml,
+          _session: newsessionmap,
+        });
+      }
     }
   }
 

@@ -7,7 +7,7 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Colors.transparent,
       child: LoadingAnimationWidget.threeRotatingDots(
           color: Colors.blue, size: 50),
     );

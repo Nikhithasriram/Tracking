@@ -150,6 +150,8 @@ class Content extends StatefulWidget {
 }
 
 class _ContentState extends State<Content> {
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     Future<void> selectDate() async {
@@ -194,92 +196,111 @@ class _ContentState extends State<Content> {
             ? const Text("New Session Reading")
             : const Text("Edit session reading"),
         scrollable: true,
-        content: Column(
-          children: [
-            TextField(
-              controller: widget.inmlcontroller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "In",
-                suffixIcon: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Text("ml"),
+        content: Form(
+          key: _formkey,
+          child: Column(
+            children: [
+              TextFormField(
+                validator: (value) {
+                  if (double.tryParse(value ?? "") == null && value != "") {
+                    return "Enter valid info";
+                  }
+                  if (widget.inmlcontroller.text == "" &&
+                      widget.outmlcontroller.text == "") {
+                    return "Enter atleast one input";
+                  }
+                  return null;
+                },
+                controller: widget.inmlcontroller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "In",
+                  suffixIcon: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Text("ml"),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            TextField(
-              controller: widget.outmlcontroller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Out",
-                suffixIcon: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Text("ml"),
+              const SizedBox(
+                height: 5,
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (double.tryParse(value ?? "") == null && value != "") {
+                    return "Enter valid info";
+                  }
+                  if (widget.inmlcontroller.text == "" &&
+                      widget.outmlcontroller.text == "") {
+                    return "Enter atleast one input";
+                  }
+                  return null;
+                },
+                controller: widget.outmlcontroller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Out",
+                  suffixIcon: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Text("ml"),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextField(
-              controller: widget.datecontroller,
-              keyboardType: TextInputType.none,
-              onTap: () {
-                selectDate();
-              },
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Date",
-                  prefixIcon: Icon(Icons.calendar_today_rounded)),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            TextField(
-              controller: widget.timecontroller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              onTap: () {
-                selectTime();
-              },
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Time",
-                  prefixIcon: Icon(Icons.access_time)),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            TextField(
-              controller: widget.notescontroller,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Notes",
-                  prefixIcon: Icon(Icons.notes)),
-            ),
-          ],
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: widget.datecontroller,
+                keyboardType: TextInputType.none,
+                onTap: () {
+                  selectDate();
+                },
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "Date",
+                    prefixIcon: Icon(Icons.calendar_today_rounded)),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              TextFormField(
+                controller: widget.timecontroller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                onTap: () {
+                  selectTime();
+                },
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "Time",
+                    prefixIcon: Icon(Icons.access_time)),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: widget.notescontroller,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: "Notes",
+                    prefixIcon: Icon(Icons.notes)),
+              ),
+            ],
+          ),
         ),
         actions: [
           FilledButton(
               onPressed: () {
                 // final value = context.read<DialysisProvier>();
-                final inml = double.tryParse(widget.inmlcontroller.text) ?? 0.0;
-                final outml =
-                    double.tryParse(widget.outmlcontroller.text) ?? 0.0;
-                if (inml == 0.0 && outml == 0.0) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Please Enter atleast one valid input"),
-                    behavior: SnackBarBehavior.floating,
-                  ));
-                } else {
+                if (_formkey.currentState!.validate()) {
+                  final inml =
+                      double.tryParse(widget.inmlcontroller.text) ?? 0.0;
+                  final outml =
+                      double.tryParse(widget.outmlcontroller.text) ?? 0.0;
                   if (widget.widget.subuuid != "") {
                     DatabaseDialysis().update(
                         uuid: widget.widget.uuid,
@@ -292,15 +313,6 @@ class _ContentState extends State<Content> {
                             sessionnet: 0,
                             notes: widget.notescontroller.text,
                             uuid: widget.widget.subuuid));
-                    // value.delete(
-                    //     index: widget.index, subindex: widget.subindex);
-                    // value.add(Onesession(
-                    //     inml: inml,
-                    //     outml: outml,
-                    //     date: datecontroller.text,
-                    //     time: timecontroller.text,
-                    //     sessionnet: 0,
-                    //     notes: notescontroller.text));
                   } else {
                     DatabaseDialysis().add(
                         inml: inml,
@@ -310,8 +322,29 @@ class _ContentState extends State<Content> {
                         notes: widget.notescontroller.text);
                   }
 
+
                   Navigator.of(context).pop();
+                  // debugPrint("hello");
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    backgroundColor: Colors.transparent,
+                    content: Text("Value Added Succesfully"),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+
+                  // debugPrint("hello");
                 }
+                // final inml = double.tryParse(widget.inmlcontroller.text) ?? 0.0;
+                // final outml =
+                //     double.tryParse(widget.outmlcontroller.text) ?? 0.0;
+                // if (inml == 0.0 && outml == 0.0) {
+                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     content: Text("Please Enter atleast one valid input"),
+                //     behavior: SnackBarBehavior.floating,
+                //   ));
+                // } else {
+
+                // }
               },
               child: const Text("Save")),
           TextButton(

@@ -184,6 +184,7 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
     });
   }
 
+  final _formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,93 +193,126 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
         scrollable: true,
         title: Text(
             widget.widget.subuuid == '' ? "New Reading" : "Update Reading"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: widget.intakemlController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text("ml"),
-                  ),
-                  hintText: "Water Intake",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              controller: widget.outputmlController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text("ml"),
-                  ),
-                  hintText: "Urine Output",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              controller: widget.miscmlController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text("ml"),
-                  ),
-                  hintText: "Miscellaneous",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            TextField(
-              onTap: () {
-                selectDate();
-              },
-              controller: widget.dateController,
-              keyboardType: TextInputType.none,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.calendar_today),
-                  hintText: "Date",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextField(
-              onTap: () {
-                selectTime();
-              },
-              controller: widget.timeController,
-              keyboardType: TextInputType.none,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.access_time),
-                  hintText: "Time",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            TextField(
-              controller: widget.notesController,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.notes),
-                  hintText: "Notes",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+        content: Form(
+          key: _formkey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                validator: (value) {
+                  if (double.tryParse(value ?? "") == null && value != "") {
+                    return "Enter valid value";
+                  } else if (widget.intakemlController.text == "" &&
+                      widget.outputmlController.text == "" &&
+                      widget.miscmlController.text == "") {
+                    return "Enter atlest one value";
+                  }
+                  return null;
+                },
+                controller: widget.intakemlController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                    suffixIcon: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Text("ml"),
+                    ),
+                    hintText: "Water Intake",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (double.tryParse(value ?? "") == null && value != "") {
+                    return "Enter valid value";
+                  } else if (widget.intakemlController.text == "" &&
+                      widget.outputmlController.text == "" &&
+                      widget.miscmlController.text == "") {
+                    return "Enter atlest one value";
+                  }
+                  return null;
+                },
+                controller: widget.outputmlController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                    suffixIcon: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Text("ml"),
+                    ),
+                    hintText: "Urine Output",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (double.tryParse(value ?? "") == null && value != "") {
+                    return "Enter valid value";
+                  } else if (widget.intakemlController.text == "" &&
+                      widget.outputmlController.text == "" &&
+                      widget.miscmlController.text == "") {
+                    return "Enter atlest one value";
+                  }
+                  return null;
+                },
+                controller: widget.miscmlController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                    suffixIcon: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Text("ml"),
+                    ),
+                    hintText: "Miscellaneous",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              TextFormField(
+                onTap: () {
+                  selectDate();
+                },
+                controller: widget.dateController,
+                keyboardType: TextInputType.none,
+                decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.calendar_today),
+                    hintText: "Date",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                onTap: () {
+                  selectTime();
+                },
+                controller: widget.timeController,
+                keyboardType: TextInputType.none,
+                decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.access_time),
+                    hintText: "Time",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              TextFormField(
+                controller: widget.notesController,
+                decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.notes),
+                    hintText: "Notes",
+                    border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
         ),
         actions: [
           FilledButton(
@@ -287,7 +321,7 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
             //         WidgetStatePropertyAll(Colors.purple.shade200)),
             onPressed: () {
               // final value = context.read<WaterProvider>();
-              final double intakeml =
+               final double intakeml =
                   double.tryParse(widget.intakemlController.text) ?? 0.0;
               final double outputml =
                   double.tryParse(widget.outputmlController.text) ?? 0.0;
@@ -296,12 +330,8 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
               final String date = widget.dateController.text;
               final String time = widget.timeController.text;
               final String notes = widget.notesController.text;
-              if (intakeml == 0.0 && miscml == 0.0 && outputml == 0.0) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Enter atleast one valid value"),
-                  behavior: SnackBarBehavior.floating,
-                ));
-              } else {
+              if (_formkey.currentState!.validate()) {
+                // print("validates");
                 if (widget.widget.subuuid == '') {
                   DatabaseWater().addWater(
                       intakeml: intakeml,
@@ -310,9 +340,7 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
                       date: date,
                       time: time,
                       notes: notes);
-                  // value.add(intakeml, outputml, miscml, date, time, notes);
                 } else {
-                  // value.delete(widget.index, widget.daycontentsindex);
                   DatabaseWater().updatewater(
                       intakeml: intakeml,
                       outputml: outputml,
@@ -321,20 +349,10 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
                       time: time,
                       notes: notes,
                       subuuid: widget.widget.subuuid);
-                  // //todo delete
-                  // DatabaseWater().addWater(
-                  //     intakeml: intakeml,
-                  //     outputml: outputml,
-                  //     miscml: miscml,
-                  //     date: date,
-                  //     time: time,
-                  //     notes: notes);
                 }
 
                 Navigator.of(context).pop();
               }
-
-              // print(value.items);
             },
             child: Text(
               widget.widget.subuuid == '' ? "Save" : "Update",

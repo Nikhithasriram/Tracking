@@ -44,6 +44,9 @@ dependencies:
   firebase_core: ^2.24.2
   loading_animation_widget: ^1.2.1
   cloud_firestore: ^4.14.0
+  fl_chart: ^0.68.0
+  syncfusion_flutter_charts: ^26.2.10
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

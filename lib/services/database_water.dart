@@ -36,6 +36,19 @@ class DatabaseWater {
             Timestamp.fromDate(mydatetime(value[_date], "1:00 pm")));
   }
 
+  Future<List<DayWater>> waterBetweenDates(
+      DateTime start, DateTime end) async {
+    final betweendatesdocs = await users
+        .doc(_auth.currentUser!.uid)
+        .collection('water')
+        .where(_sortingtime,
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where(_sortingtime, isLessThanOrEqualTo: Timestamp.fromDate(end))
+        .orderBy(_sortingtime , )
+        .get();
+    return _listfromsnapshots(betweendatesdocs);
+  }
+
   Future<NewWater> getwaterwithsubuuid(
       {required String uuid, required String subuuid}) async {
     final waterreference =
@@ -124,11 +137,15 @@ class DatabaseWater {
       }
       return e[_uuid] != subuuid;
     }).toList();
-    doc.update({
-      _intakeml: newinput,
-      _outputml: newoutput,
-      _dayContents: newdaycontents
-    });
+    if (newdaycontents.length > 0) {
+      doc.update({
+        _intakeml: newinput,
+        _outputml: newoutput,
+        _dayContents: newdaycontents
+      });
+    } else {
+      doc.delete();
+    }
   }
 
   Future<void> updatewater(

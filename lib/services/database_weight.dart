@@ -56,6 +56,19 @@ class DatabaseWeights {
         .map(_weightlistfromsnapshot);
   }
 
+  Future<List<NewWeight>> weightBetweenDates(
+      DateTime start, DateTime end) async {
+    final betweendatesdocs = await users
+        .doc(_auth.currentUser!.uid)
+        .collection('weights')
+        .where(_sortingtimestamp,
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where(_sortingtimestamp, isLessThanOrEqualTo: Timestamp.fromDate(end))
+        .orderBy(_sortingtimestamp , )
+        .get();
+    return _weightlistfromsnapshot(betweendatesdocs);
+  }
+
   Future<void> updatevalue(
       {required String uuid,
       required double weight,
