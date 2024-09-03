@@ -151,7 +151,7 @@ class _GraphPageState extends State<GraphPage> {
                 ),
               ),
               Container(
-                child: _buildGraph(selectedview, dateRange.start, dateRange.end,
+                child: buildGraph(selectedview, dateRange.start, dateRange.end,
                     Set.from(graphveiw)),
               ),
             ],
@@ -162,7 +162,7 @@ class _GraphPageState extends State<GraphPage> {
   }
 }
 
-Widget _buildGraph(
+Widget buildGraph(
     Selected option, DateTime start, DateTime end, Set<Graphtype> graphveiw) {
   switch (option) {
     case Selected.month:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:tracking_app/pages/info/dialysis.dart';
+import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
 import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/utils/loading.dart';
 import 'info/weight.dart';
@@ -72,9 +74,15 @@ class _InfoState extends State<Info> {
                         });
                       },
                     ),
-                    // ListTile(
-                    //   leading: const ,
-                    // )
+                    ListTile(
+                      leading: const Icon(Icons.send),
+                      title: const Text("Export and Send"),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const PDFPage(),
+                        ));
+                      },
+                    )
                   ],
                 ),
               ),

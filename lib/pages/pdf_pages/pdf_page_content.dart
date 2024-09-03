@@ -1,22 +1,30 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:tracking_app/pages/graphs/graph_data.dart';
 import 'package:tracking_app/models/graphselection.dart';
+import 'package:tracking_app/pages/pdf_pages/selection_data.dart';
+import 'package:tracking_app/utils/my_drawer.dart';
 
-
-
-
-class GraphPage extends StatefulWidget {
-  const GraphPage({super.key});
+class PDFPage extends StatefulWidget {
+  const PDFPage({super.key});
 
   @override
-  State<GraphPage> createState() => _GraphPageState();
+  State<PDFPage> createState() => _PDFPageState();
 }
 
-class _GraphPageState extends State<GraphPage> {
+class _PDFPageState extends State<PDFPage> {
   final DateTime nowdate = DateTime.now();
   Selected selectedview = Selected.month;
-  Set<Graphtype> graphveiw = {Graphtype.weight};
+  Set<Graphtype> graphveiw = {
+    Graphtype.weight,
+    Graphtype.waterIntake,
+    Graphtype.waterOutput,
+    Graphtype.dialysisOut
+  };
+  // late Uint8List _image;
+
   TextEditingController startcontroller = TextEditingController();
   TextEditingController endcontroller = TextEditingController();
   late DateTimeRange dateRange = DateTimeRange(
@@ -45,6 +53,13 @@ class _GraphPageState extends State<GraphPage> {
     endcontroller.text = DateFormat.yMMMd().format(dateRange.end);
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey.shade50,
+        title: const Text("PD Tracker"),
+        elevation: 0,
+      ),
+      drawer: const MyDrawer(),
+      //TODO: drawer
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -154,6 +169,12 @@ class _GraphPageState extends State<GraphPage> {
               //   child: _buildGraph(selectedview, dateRange.start, dateRange.end,
               //       Set.from(graphveiw)),
               // ),
+              ElevatedButton(
+                  onPressed: () {
+                    selectionData(selectedview, dateRange.start, dateRange.end,
+                        graphveiw);
+                  },
+                  child: const Text("Preview PDF"))
             ],
           ),
         ),

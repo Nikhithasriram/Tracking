@@ -70,9 +70,22 @@ class _GraphDataState extends State<GraphData> {
       }
     }
     if (widget.startdate != null && widget.enddate != null) {
-      // print("custom");
-      weightvalue = await DatabaseWeights()
-          .weightBetweenDates(widget.startdate!, widget.enddate!);
+      if (widget.graphveiw.contains(Graphtype.weight)) {
+        weightvalue = await DatabaseWeights()
+            .weightBetweenDates(widget.startdate!, widget.enddate!);
+      }
+      if (widget.graphveiw.contains(Graphtype.waterIntake)) {
+        waterIntakeValue = await DatabaseWater()
+            .waterBetweenDates(widget.startdate!, widget.enddate!);
+      }
+      if (widget.graphveiw.contains(Graphtype.waterOutput)) {
+        waterOutputValue = await DatabaseWater()
+            .waterBetweenDates(widget.startdate!, widget.enddate!);
+      }
+      if (widget.graphveiw.contains(Graphtype.dialysisOut)) {
+        dialysisValue = await DatabaseDialysis()
+            .dialysisReadingBetweenDates(widget.startdate!, widget.enddate!);
+      }
     }
   }
 
