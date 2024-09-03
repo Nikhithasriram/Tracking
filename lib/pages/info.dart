@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
+// import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:tracking_app/pages/info/dialysis.dart';
 import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
 import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_drawer.dart';
 import 'info/weight.dart';
 import 'info/water.dart';
 
@@ -49,43 +50,7 @@ class _InfoState extends State<Info> {
               body: TabBarView(
                 children: tabs,
               ),
-              drawer: Drawer(
-                child: ListView(
-                  children: [
-                    // Container(
-                    //   height: 100,
-                    //   decoration: BoxDecoration(
-                    //       color: Colors.blue,
-                    //       borderRadius: BorderRadius.circular(20)),
-                    // ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.logout_rounded),
-                      title: const Text("Sign Out"),
-                      onTap: () async {
-                        setState(() {
-                          loading = false;
-                        });
-                        await AuthService().signOut(context);
-                        setState(() {
-                          loading = true;
-                        });
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.send),
-                      title: const Text("Export and Send"),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const PDFPage(),
-                        ));
-                      },
-                    )
-                  ],
-                ),
-              ),
+              drawer: const MyDrawer(),
             ),
           );
   }

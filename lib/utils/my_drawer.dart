@@ -16,10 +16,12 @@ class _MyDrawerState extends State<MyDrawer> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? const Loading()
-        : Drawer(
-            child: ListView(
+    return Drawer(
+      child: loading
+          ? const Center(
+              child: Loading(),
+            )
+          : ListView(
               children: [
                 // Container(
                 //   height: 100,
@@ -63,6 +65,6 @@ class _MyDrawerState extends State<MyDrawer> {
                 ),
               ],
             ),
-          );
+    );
   }
 }

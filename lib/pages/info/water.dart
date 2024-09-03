@@ -1,4 +1,3 @@
-
 import 'package:provider/provider.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/pages/no_data_yet.dart';

@@ -45,6 +45,9 @@ Future<void> createPDF(
   grid.headers.add(1);
 
   PdfGridRow header = grid.headers[0];
+  header.style = PdfGridCellStyle(
+    font: PdfStandardFont(PdfFontFamily.helvetica, 13),
+  );
   header.cells[0].value = "Date";
   int i = 1;
   List combination = [];

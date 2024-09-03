@@ -15,7 +15,9 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? const Loading()
+        ? Scaffold(
+            backgroundColor: Colors.blueGrey.shade50,
+            body: const Center(child: Loading()))
         : Scaffold(
             backgroundColor: const Color.fromRGBO(145, 158, 202, 1),
             body: Center(
@@ -110,5 +112,3 @@ class _SignInState extends State<SignIn> {
           );
   }
 }
-
-

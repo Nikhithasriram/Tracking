@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+// import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
@@ -63,7 +63,6 @@ class _PDFPageState extends State<PDFPage> {
         elevation: 0,
       ),
       drawer: const MyDrawer(),
-      //TODO: drawer
       body: loading
           ? const Center(
               child: Loading(),
@@ -177,6 +176,9 @@ class _PDFPageState extends State<PDFPage> {
                     //   child: _buildGraph(selectedview, dateRange.start, dateRange.end,
                     //       Set.from(graphveiw)),
                     // ),
+                    const SizedBox(
+                      height: 200,
+                    ),
 
                     ElevatedButton(
                         onPressed: () async {
@@ -186,7 +188,7 @@ class _PDFPageState extends State<PDFPage> {
                           // if (!mounted) return;
                           setState(() {
                             loading = true;
-                            print(loading);
+                            // print(loading);
                           });
                           screenshotController
                               .captureFromWidget(MediaQuery(
@@ -195,13 +197,21 @@ class _PDFPageState extends State<PDFPage> {
                                 dateRange.end, Set.from(graphveiw), 0),
                           ))
                               .then((capturedimage) {
+                            selectionData(selectedview, dateRange.start,
+                                dateRange.end, graphveiw, capturedimage);
+                            // setState(() {
+                            //   loading = false;
+                            // });
+                          }).then((v) {
                             setState(() {
                               loading = false;
                             });
-                            selectionData(selectedview, dateRange.start,
-                                dateRange.end, graphveiw, capturedimage);
                           });
                         },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 32, 127, 222),
+                            foregroundColor: Colors.white),
                         child: const Text("Preview PDF"))
                   ],
                 ),
