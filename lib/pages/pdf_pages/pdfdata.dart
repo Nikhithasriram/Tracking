@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tracking_app/models/dialysisclass.dart';
 import 'package:tracking_app/models/graphselection.dart';
 import 'package:tracking_app/models/waterclass.dart';
@@ -10,6 +12,7 @@ import 'package:tracking_app/services/database_weight.dart';
 Future<void> pdfdata(
     {required Selected option,
     required Set<Graphtype> graphveiw,
+    required Uint8List image,
     DateTime? startdate,
     DateTime? enddate}) async {
   List<NewWeight> weightvalue = [];
@@ -59,7 +62,8 @@ Future<void> pdfdata(
       weightvalue: weightvalue,
       waterIntakeValue: waterIntakeValue,
       waterOutputValue: waterOutputValue,
-      dialysisValue: dialysisValue);
+      dialysisValue: dialysisValue ,
+      image: image);
 }
 
 DateTime getdate(Selected option) {

@@ -152,7 +152,7 @@ class _GraphPageState extends State<GraphPage> {
               ),
               Container(
                 child: buildGraph(selectedview, dateRange.start, dateRange.end,
-                    Set.from(graphveiw)),
+                    Set.from(graphveiw) , 1500),
               ),
             ],
           ),
@@ -163,22 +163,25 @@ class _GraphPageState extends State<GraphPage> {
 }
 
 Widget buildGraph(
-    Selected option, DateTime start, DateTime end, Set<Graphtype> graphveiw) {
+    Selected option, DateTime start, DateTime end, Set<Graphtype> graphveiw , double animationduration) {
   switch (option) {
     case Selected.month:
       return GraphData(
         option: Selected.month,
         graphveiw: graphveiw,
+        animationduration: animationduration,
       );
     case Selected.threemonths:
       return GraphData(
         option: Selected.threemonths,
         graphveiw: graphveiw,
+        animationduration: animationduration,
       );
     case Selected.year:
       return GraphData(
         option: Selected.year,
         graphveiw: graphveiw,
+        animationduration: animationduration,
       );
     case Selected.custom:
       return GraphData(
@@ -186,6 +189,7 @@ Widget buildGraph(
         graphveiw: graphveiw,
         startdate: start,
         enddate: end,
+        animationduration: animationduration,
       );
   }
 }

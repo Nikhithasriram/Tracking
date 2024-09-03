@@ -9,17 +9,20 @@ import 'package:tracking_app/services/database_weight.dart';
 import 'package:tracking_app/utils/loading.dart';
 import 'package:tracking_app/models/graphselection.dart';
 import 'package:tracking_app/pages/graphs/graph.dart';
+
 class GraphData extends StatefulWidget {
   final Selected option;
   final Set<Graphtype> graphveiw;
   final DateTime? startdate;
   final DateTime? enddate;
+  final double animationduration;
   const GraphData(
       {super.key,
       required this.option,
       required this.graphveiw,
       this.startdate,
-      this.enddate});
+      this.enddate,
+      required this.animationduration});
 
   @override
   State<GraphData> createState() => _GraphDataState();
@@ -127,7 +130,8 @@ class _GraphDataState extends State<GraphData> {
               weightvalue: weightvalue,
               waterIntakeValue: waterIntakeValue,
               waterOutputValue: waterOutputValue,
-              dialysisValue: dialysisValue);
+              dialysisValue: dialysisValue,
+              animationduration: widget.animationduration,);
         } else {
           return const Center(child: Loading());
         }

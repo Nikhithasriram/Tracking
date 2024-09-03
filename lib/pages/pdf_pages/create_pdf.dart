@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -11,13 +13,22 @@ Future<void> createPDF(
     {required List<NewWeight> weightvalue,
     required List<DayWater> waterIntakeValue,
     required List<DayWater> waterOutputValue,
-    required List<DialysisReading> dialysisValue}) async {
+    required List<DialysisReading> dialysisValue,
+    required Uint8List image}) async {
   PdfDocument document = PdfDocument();
   final page = document.pages.add();
-  page.graphics
+  PdfPageTemplateElement pageheader = PdfPageTemplateElement(
+      Rect.fromLTRB(0, 0, document.pageSettings.size.width, 100));
+  pageheader.graphics
       .drawString("PD Report", PdfStandardFont(PdfFontFamily.helvetica, 40));
-  page.graphics
+  pageheader.graphics
       .drawLine(PdfPens.black, const Offset(5, 80), const Offset(805, 80));
+  document.template.top = pageheader;
+  // page.graphics
+  //     .drawString("PD Report", PdfStandardFont(PdfFontFamily.helvetica, 40));
+  // page.graphics
+  //     .drawLine(PdfPens.black, const Offset(5, 80), const Offset(805, 80));
+
   int count = 0;
   count = weightvalue.isNotEmpty ? count + 1 : count;
   count = waterIntakeValue.isNotEmpty ? count + 1 : count;
@@ -120,11 +131,10 @@ Future<void> createPDF(
   DateTime idate = latestdate;
   // print(lastdate.toString());
   // print(latestdate.toString());
-  int ele = 0;
 
   while (idate.isAfter(lastdate)) {
     int pos = 0;
-    int i = 0;
+
     List<String> defaultrow;
     if (dialysisValue.isNotEmpty) {
       //plus two is one for the date and another one is for the no of bags
@@ -154,22 +164,20 @@ Future<void> createPDF(
                 defaultrow[pos] =
                     '${e.value[counter[e.key]].weight.toString()}\n${e.value[counter[e.key] - 1].weight.toString()}';
                 counter[e.key] = counter[e.key] - 2;
-                i++;
+
                 continue;
               }
             }
             defaultrow[pos] = e.value[counter[e.key]].weight.toString();
             counter[e.key]--;
-            i++;
           }
           if (e.key == "waterIntake") {
             defaultrow[pos] = e.value[counter[e.key]].intakeml.toString();
-            i++;
+
             counter[e.key]--;
           }
           if (e.key == "waterOutput") {
             defaultrow[pos] = e.value[counter[e.key]].outputml.toString();
-            i++;
             counter[e.key]--;
           }
           if (e.key == "dialysis") {
@@ -178,14 +186,13 @@ Future<void> createPDF(
             defaultrow[pos] =
                 ((e.value[counter[e.key]].session.length) - 1).toString();
 
-            i++;
             counter[e.key]--;
           }
         }
       }
     }
 
-    if (!defaultrow.every((e)=>e=="")) {
+    if (!defaultrow.every((e) => e == "")) {
       PdfGridRow row = grid.rows.add();
 
       for (int i = 0; i < defaultrow.length; i++) {
@@ -195,12 +202,23 @@ Future<void> createPDF(
 
     idate = DateTime(idate.year, idate.month, idate.day - 1);
   }
-  print(ele);
+  // print(ele);
 
-  grid.draw(page: page, bounds: const Rect.fromLTRB(5, 120, 5, 0));
+  grid.draw(page: page, bounds: const Rect.fromLTRB(5, 10, 5, 0));
+  final PdfBitmap bitmap = PdfBitmap(image);
+  final double height = bitmap.height.toDouble();
+  final double width = bitmap.width.toDouble();
+  final double newheight = height * 0.4;
+  final double newwidth = newheight * width / height;
+  print(height);
+  print(width);
+  final page2 = document.pages.add();
+  page2.graphics
+      .drawString("PD Trend", PdfStandardFont(PdfFontFamily.helvetica, 20));
+  page2.graphics
+      .drawImage(bitmap, Rect.fromLTRB(50, 20, newwidth + 50, newheight + 20));
 
   List<int> bytes = await document.save();
   document.dispose();
   saveandlanchFile(bytes, 'report.pdf');
 }
-

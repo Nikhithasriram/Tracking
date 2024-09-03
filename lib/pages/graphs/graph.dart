@@ -11,13 +11,15 @@ class Graph extends StatefulWidget {
   final List<DayWater> waterIntakeValue;
   final List<DayWater> waterOutputValue;
   final List<DialysisReading> dialysisValue;
+  final double animationduration;
 
   const Graph(
       {super.key,
       required this.weightvalue,
       required this.waterIntakeValue,
       required this.waterOutputValue,
-      required this.dialysisValue});
+      required this.dialysisValue,
+      required this.animationduration});
 
   @override
   State<Graph> createState() => _GraphState();
@@ -65,12 +67,14 @@ class _GraphState extends State<Graph> {
                   ],
                   legend: const Legend(
                       isVisible: true,
-                      overflowMode: LegendItemOverflowMode.wrap),
+                      overflowMode: LegendItemOverflowMode.wrap,
+                    ),
                   series: lineseries(
                       widget.weightvalue,
                       widget.waterIntakeValue,
                       widget.waterOutputValue,
-                      widget.dialysisValue)),
+                      widget.dialysisValue,
+                      widget.animationduration)),
             )),
           ),
         ),
@@ -83,11 +87,13 @@ List<CartesianSeries> lineseries(
     List<NewWeight> weightvalue,
     List<DayWater> waterIntakeValue,
     List<DayWater> waterOutputValue,
-    List<DialysisReading> dialysisValue) {
+    List<DialysisReading> dialysisValue,
+    double animationduration) {
   List<CartesianSeries> value = [];
   if (weightvalue.isNotEmpty) {
     // print(weightvalue.length);
     value.add(LineSeries<NewWeight, DateTime>(
+        animationDuration: animationduration,
         markerSettings: const MarkerSettings(isVisible: true),
         enableTooltip: true,
         name: "Weight",
@@ -103,6 +109,7 @@ List<CartesianSeries> lineseries(
     value.add(LineSeries<DayWater, DateTime>(
         markerSettings: const MarkerSettings(isVisible: true),
         enableTooltip: true,
+        animationDuration: animationduration,
         name: "Water Input",
         // xAxisName: "Date",
         // yAxisName: "Weight",
@@ -116,6 +123,8 @@ List<CartesianSeries> lineseries(
         markerSettings: const MarkerSettings(isVisible: true),
         enableTooltip: true,
         name: "Water Output",
+        animationDuration: animationduration,
+
         // xAxisName: "Date",
         // yAxisName: "Weight",
         dataSource: waterOutputValue,
@@ -128,6 +137,8 @@ List<CartesianSeries> lineseries(
         markerSettings: const MarkerSettings(isVisible: true),
         enableTooltip: true,
         name: "PD NetOut",
+        animationDuration: animationduration,
+
         // xAxisName: "Date",
         // yAxisName: "Weight",
         dataSource: dialysisValue,
