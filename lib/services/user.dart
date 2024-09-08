@@ -55,7 +55,6 @@ class User {
         .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
         final userDoc = snapshot.docs.first;
-        print("Empty");
         return AppUser(
           name: userDoc.get(_name),
           gender: userDoc.get(_gender),

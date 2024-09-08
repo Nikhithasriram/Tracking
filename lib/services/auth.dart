@@ -29,7 +29,14 @@ class AuthService {
 
         return userCredential.user;
       } on FirebaseAuthException catch (e) {
-        print(e.code);
+        // if (context.mounted) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       content: Text("An error occurred. Please try again.${e.code}"),
+        //       behavior: SnackBarBehavior.floating,
+        //     ),
+        //   );
+        // }
         return null;
       }
     } else {
@@ -45,8 +52,14 @@ class AuthService {
 
       // print("signed out");
     } catch (e) {
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("")));
-      print(e);
+      // if (context.mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text("An error occurred. Please try again.$e"),
+      //       behavior: SnackBarBehavior.floating,
+      //     ),
+      //   );
+      // }
     }
   }
 

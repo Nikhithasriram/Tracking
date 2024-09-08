@@ -58,8 +58,6 @@ class DatabaseDialysis {
       // print("nice1");
 
       final reading = await pd.doc(docid).get();
-      // print(reading[_session]);
-      print(reading[_netml]);
       return DialysisReading(
           netml: (reading.get(_netml) as num).toDouble(),
           date: reading[_date],

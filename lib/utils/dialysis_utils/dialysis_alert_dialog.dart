@@ -46,18 +46,7 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
   }
 
   Future<void> samedateInitailizer() async {
-    //date
-    // final DialysisProvier value =
-    //     Provider.of<DialysisProvier>(context, listen: false);
-    // datecontroller.text = value.items[widget.index].date;
-    // try {
-    //   final value = await DatabaseDialysis().pdreading(uuid: widget.uuid);
-    // } catch (e) {
-    //   print(e);
-    // }
     final value = await DatabaseDialysis().pdreading(uuid: widget.uuid);
-    // print(value?.date ?? "null");
-    print(value);
     datecontroller.text = value?.date ?? "";
     TimeOfDay time = TimeOfDay.now();
     String min = time.minute < 10 ? "0${time.minute}" : time.minute.toString();
@@ -71,18 +60,8 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
   }
 
   Future<void> editInitializer() async {
-    // print("edit initializer23");
-
-    // try {
-    //   final value = await DatabaseDialysis()
-    //       .onesessionreading(uuid: widget.uuid, subuuid: widget.subuuid);
-    // } catch (e) {
-    //   print(e);
-    // }
     final value = await DatabaseDialysis()
         .onesessionreading(uuid: widget.uuid, subuuid: widget.subuuid);
-    // print("edit initializer");
-    // print(value?.inml.toString() ?? "22222");
     inmlcontroller.text = value?.inml.toString() ?? "";
     outmlcontroller.text = value?.outml.toString() ?? "";
     datecontroller.text = value?.date.toString() ?? "";

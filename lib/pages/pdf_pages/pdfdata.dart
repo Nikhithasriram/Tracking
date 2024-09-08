@@ -21,27 +21,36 @@ Future<void> pdfdata(
   List<DayWater> waterOutputValue = [];
   List<DialysisReading> dialysisValue = [];
   AppUser appUser = await User().appUserinfo();
+  DateTime start  = getdate(option);
+  // DateTime end;
 
   DateTime end = DateTime.now();
   if (startdate == null && enddate == null) {
     if (graphveiw.contains(Graphtype.weight)) {
-      weightvalue =
-          await DatabaseWeights().weightBetweenDates(getdate(option), end);
+      start = getdate(option);
+      weightvalue = await DatabaseWeights().weightBetweenDates(start, end);
     }
     if (graphveiw.contains(Graphtype.waterIntake)) {
-      waterIntakeValue =
-          await DatabaseWater().waterBetweenDates(getdate(option), end);
+      start = getdate(option);
+
+      waterIntakeValue = await DatabaseWater().waterBetweenDates(start, end);
     }
     if (graphveiw.contains(Graphtype.waterOutput)) {
+      start = getdate(option);
+
       waterOutputValue =
           await DatabaseWater().waterBetweenDates(getdate(option), end);
     }
     if (graphveiw.contains(Graphtype.dialysisOut)) {
+      start = getdate(option);
+
       dialysisValue = await DatabaseDialysis()
           .dialysisReadingBetweenDates(getdate(option), end);
     }
   }
-  if (startdate != null && enddate != null) {
+  else if (startdate != null && enddate != null) {
+    start = startdate;
+    end = enddate;
     if (graphveiw.contains(Graphtype.weight)) {
       weightvalue =
           await DatabaseWeights().weightBetweenDates(startdate, enddate);
@@ -65,8 +74,8 @@ Future<void> pdfdata(
       waterIntakeValue: waterIntakeValue,
       waterOutputValue: waterOutputValue,
       dialysisValue: dialysisValue,
-      image: image ,
-      appuser:appUser);
+      image: image,
+      appuser: appUser , start: start , end: end);
 }
 
 DateTime getdate(Selected option) {

@@ -15,7 +15,9 @@ Future<void> createPDF(
     required List<DayWater> waterOutputValue,
     required List<DialysisReading> dialysisValue,
     required Uint8List image,
-    required AppUser appuser}) async {
+    required AppUser appuser,
+    required DateTime start,
+    required DateTime end}) async {
   PdfDocument document = PdfDocument();
   final page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
@@ -37,7 +39,7 @@ Future<void> createPDF(
 
   graphics.drawString(
     "Name: ${appuser.name}",
-    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
   );
@@ -46,7 +48,7 @@ Future<void> createPDF(
 
   graphics.drawString(
     "Gender: ${appuser.gender}",
-    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
   );
@@ -57,19 +59,23 @@ Future<void> createPDF(
       appuser.dob != null ? DateFormat.yMMMd().format(appuser.dob!) : "";
   graphics.drawString(
     "DOB: $date",
-    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
   );
 
   graphics.drawString("Hospital: ${appuser.hospital}",
-      PdfStandardFont(PdfFontFamily.helvetica, 15),
-      bounds: Rect.fromLTRB(document.pageSettings.width - 200, 100,
+      PdfStandardFont(PdfFontFamily.helvetica, 13),
+      bounds: Rect.fromLTRB(document.pageSettings.width - 230, 100,
           document.pageSettings.width, 120));
   graphics.drawString(
-      "Doctor: ${appuser.doctor}", PdfStandardFont(PdfFontFamily.helvetica, 15),
-      bounds: Rect.fromLTRB(document.pageSettings.width - 200, 120,
+      "Doctor: ${appuser.doctor}", PdfStandardFont(PdfFontFamily.helvetica, 13),
+      bounds: Rect.fromLTRB(document.pageSettings.width - 230, 120,
           document.pageSettings.width, 140));
+  graphics.drawString(
+      "Date Range: ${DateFormat.yMMMd().format(start)} - ${DateFormat.yMMMd().format(end)}",
+      PdfStandardFont(PdfFontFamily.helvetica, 13),
+      bounds: Rect.fromLTRB(marginLeft, 160, document.pageSettings.width, 180));
 
   // Draw a line below the header.
   pageHeader.graphics.drawLine(
@@ -263,8 +269,6 @@ Future<void> createPDF(
   final double width = bitmap.width.toDouble();
   final double newheight = height * 0.4;
   final double newwidth = newheight * width / height;
-  print(height);
-  print(width);
   double initialleft;
   if (combined.length == 4) {
     initialleft = 70;
