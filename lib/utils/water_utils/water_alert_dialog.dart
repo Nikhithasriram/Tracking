@@ -7,7 +7,8 @@ import 'package:tracking_app/utils/loading.dart';
 class WaterAlertDialog extends StatefulWidget {
   final String uuid;
   final String subuuid;
-  const WaterAlertDialog({super.key, this.uuid = '', this.subuuid = ''});
+  final BuildContext dialogcontext;
+  const WaterAlertDialog({super.key, this.uuid = '', this.subuuid = '' , required this.dialogcontext});
 
   @override
   State<WaterAlertDialog> createState() => _WaterAlertDialogState();
@@ -321,7 +322,7 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
             //         WidgetStatePropertyAll(Colors.purple.shade200)),
             onPressed: () {
               // final value = context.read<WaterProvider>();
-               final double intakeml =
+              final double intakeml =
                   double.tryParse(widget.intakemlController.text) ?? 0.0;
               final double outputml =
                   double.tryParse(widget.outputmlController.text) ?? 0.0;
@@ -352,6 +353,15 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
                 }
 
                 Navigator.of(context).pop();
+                String messagetext = widget.widget.subuuid == ""
+                      ? "Value Added Successfully"
+                      : "Value updated Successfully";
+                  // debugPrint("hello");
+                  ScaffoldMessenger.of(widget.widget.dialogcontext)
+                        .showSnackBar(SnackBar(
+                      content: Text(messagetext),
+                      behavior: SnackBarBehavior.floating,
+                    ));
               }
             },
             child: Text(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:tracking_app/pages/info/dialysis.dart';
-import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
-import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/utils/loading.dart';
 import 'package:tracking_app/utils/my_drawer.dart';
 import 'info/weight.dart';

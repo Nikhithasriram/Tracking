@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/graphs/graph_page.dart';
-import 'package:tracking_app/services/auth.dart';
-import 'package:tracking_app/utils/loading.dart';
 import 'package:tracking_app/utils/my_drawer.dart';
 
 class StatisticsPage extends StatefulWidget {

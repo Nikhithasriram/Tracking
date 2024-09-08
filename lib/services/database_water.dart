@@ -36,15 +36,15 @@ class DatabaseWater {
             Timestamp.fromDate(mydatetime(value[_date], "1:00 pm")));
   }
 
-  Future<List<DayWater>> waterBetweenDates(
-      DateTime start, DateTime end) async {
+  Future<List<DayWater>> waterBetweenDates(DateTime start, DateTime end) async {
     final betweendatesdocs = await users
         .doc(_auth.currentUser!.uid)
         .collection('water')
-        .where(_sortingtime,
-            isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where(_sortingtime, isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         .where(_sortingtime, isLessThanOrEqualTo: Timestamp.fromDate(end))
-        .orderBy(_sortingtime , )
+        .orderBy(
+          _sortingtime,
+        )
         .get();
     return _listfromsnapshots(betweendatesdocs);
   }
@@ -103,18 +103,136 @@ class DatabaseWater {
     } else {
       final docid = samedate.docs.first.id;
       final value = await waterreference.doc(docid).get();
+      final List<NewWater> daycontents =
+          _convertdaycontent(value.get(_dayContents));
+      final newdaycontents = _addaccordingtotime(
+          daycontents, intakeml, outputml, miscml, date, time, notes);
       await waterreference.doc(docid).update({
         _intakeml: value[_intakeml] + intakeml + miscml,
         _outputml: value[_outputml] + outputml,
-        _dayContents: FieldValue.arrayUnion(daycontentstolist(
-            intakeml: intakeml,
-            outputml: outputml,
-            miscml: miscml,
-            date: date,
-            time: time,
-            notes: notes))
+        _dayContents: _convertToMap(newdaycontents)
       });
     }
+  }
+
+  List<NewWater> _addaccordingtotime(
+    List<NewWater> daycontents,
+    double intakeml,
+    double outputml,
+    double miscml,
+    String date,
+    String time,
+    String notes,
+  ) {
+    if (intakeml != 0) {
+      daycontents = _basedOnTime(
+        daycontents,
+        NewWater(
+            value: intakeml,
+            type: Watertype.intake,
+            date: date,
+            time: time,
+            notes: notes,
+            uuid: const Uuid().v4()),
+      );
+    }
+    if (outputml != 0) {
+      daycontents = _basedOnTime(
+        daycontents,
+        NewWater(
+            value: outputml,
+            type: Watertype.output,
+            date: date,
+            time: time,
+            notes: notes,
+            uuid: const Uuid().v4()),
+      );
+    }
+    if (miscml != 0) {
+      daycontents = _basedOnTime(
+        daycontents,
+        NewWater(
+            value: miscml,
+            type: Watertype.misc,
+            date: date,
+            time: time,
+            notes: notes,
+            uuid: const Uuid().v4()),
+      );
+    }
+    return daycontents;
+  }
+
+  List<NewWater> _basedOnTime(List<NewWater> daycontents, NewWater value) {
+    bool added = false;
+    DateTime readingdate = mydatetime(value.date, value.time);
+    if (readingdate
+        .isBefore(mydatetime(daycontents[0].date, daycontents[0].time))) {
+      daycontents.insert(0, value);
+      added = true;
+    }
+    if (added == false) {
+      for (int i = 0; i < daycontents.length - 1; i++) {
+        DateTime loopdate =
+            mydatetime(daycontents[i].date, daycontents[i].time);
+        DateTime nextloopdate =
+            mydatetime(daycontents[i + 1].date, daycontents[i + 1].time);
+        if (readingdate.isAfter(loopdate) &&
+            readingdate.isBefore(nextloopdate)) {
+          added = true;
+          daycontents.insert(i + 1, value);
+        }
+      }
+    }
+    if (added == false && daycontents.length == 1) {
+      if (readingdate
+          .isAfter(mydatetime(daycontents[0].date, daycontents[0].time))) {
+        daycontents.add(value);
+      } else {
+        daycontents.insert(0, value);
+      }
+      added = true;
+    }
+    if (added == false) {
+      daycontents.add(value);
+    }
+    return daycontents;
+  }
+
+  List<Map> _convertToMap(List<NewWater> daycontents) {
+    List<Map> mapcontents = [];
+    for (int i = 0; i < daycontents.length; i++) {
+      if (daycontents[i].type == Watertype.intake) {
+        mapcontents.add({
+          _value: daycontents[i].value,
+          _type: 0,
+          _date: daycontents[i].date,
+          _time: daycontents[i].time,
+          _notes: daycontents[i].notes,
+          _uuid: const Uuid().v4()
+        });
+      } else if (daycontents[i].type == Watertype.output) {
+        mapcontents.add({
+          _value: daycontents[i].value,
+          _type: 1,
+          _date: daycontents[i].date,
+          _time: daycontents[i].time,
+          _notes: daycontents[i].notes,
+          _uuid: const Uuid().v4()
+        });
+      }
+      if (daycontents[i].type == Watertype.misc) {
+        mapcontents.add({
+          _value: daycontents[i].value,
+          _type: 2,
+          _date: daycontents[i].date,
+          _time: daycontents[i].time,
+          _notes: daycontents[i].notes,
+          _uuid: const Uuid().v4()
+        });
+      }
+    }
+    return mapcontents;
   }
 
   Future<void> delete({required String uuid, required String subuuid}) async {
@@ -164,32 +282,26 @@ class DatabaseWater {
       final docid = samedate.docs.first.id;
       final docreference = waterreference.doc(docid);
       final value = await docreference.get();
-      final daycontentsvalue = value[_dayContents];
+      final List<NewWater> daycontentsvalue =
+          _convertdaycontent(value[_dayContents]);
       double newintakeml = value[_intakeml];
       double newoutputml = value[_outputml];
-      final newdaycontents = daycontentsvalue.where((e) {
-        if (e[_uuid] == subuuid) {
-          if (e[_type] == 0 || e[_type] == 2) {
-            newintakeml = newintakeml - e[_value];
+      final List<NewWater> deleteddaycontents = daycontentsvalue.where((e) {
+        if (e.uuid == subuuid) {
+          if (e.type == Watertype.intake || e.type == Watertype.misc) {
+            newintakeml = newintakeml - e.value;
           } else {
-            newoutputml = newoutputml - e[_value];
+            newoutputml = newoutputml - e.value;
           }
         }
-        return e[_uuid] != subuuid;
+        return e.uuid != subuuid;
       }).toList();
-      newdaycontents.insertAll(
-          0,
-          daycontentstolist(
-              intakeml: intakeml,
-              outputml: outputml,
-              miscml: miscml,
-              date: date,
-              time: time,
-              notes: notes));
+      final List<NewWater> addeddaycontents = _addaccordingtotime(
+          deleteddaycontents, intakeml, outputml, miscml, date, time, notes);
       docreference.update({
         _intakeml: newintakeml + intakeml + miscml,
         _outputml: newoutputml + outputml,
-        _dayContents: newdaycontents,
+        _dayContents: _convertToMap(addeddaycontents),
       });
     }
   }

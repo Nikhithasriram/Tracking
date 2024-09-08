@@ -8,11 +8,12 @@ void waterdialog({
 }) {
   showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext dialogcontext) {
         return ScaffoldMessenger(
           child: WaterAlertDialog(
             uuid: uuid,
             subuuid: subuuid,
+            dialogcontext: dialogcontext,
           ),
         );
       });

@@ -5,10 +5,11 @@ import 'package:tracking_app/utils/weight_utils/alert_dialog.dart';
     // print(context);
     showDialog(
         context: context,
-        builder: (context) {
+        builder: (BuildContext dialogcontext) {
           return ScaffoldMessenger(
             child: MyAlertDialog(
               uuid: uuid,
+              dialogcontext: dialogcontext,
             ),
           );
         });

@@ -9,7 +9,12 @@ import 'package:tracking_app/utils/loading.dart';
 class DialysisAlertDialog extends StatefulWidget {
   final String uuid;
   final String subuuid;
-  const DialysisAlertDialog({super.key, this.uuid = "", this.subuuid = ""});
+  final BuildContext dialogcontext;
+  const DialysisAlertDialog(
+      {super.key,
+      this.uuid = "",
+      this.subuuid = "",
+      required this.dialogcontext});
 
   @override
   State<DialysisAlertDialog> createState() => _DialysisAlertDialogState();
@@ -52,6 +57,7 @@ class _DialysisAlertDialogState extends State<DialysisAlertDialog> {
     // }
     final value = await DatabaseDialysis().pdreading(uuid: widget.uuid);
     // print(value?.date ?? "null");
+    print(value);
     datecontroller.text = value?.date ?? "";
     TimeOfDay time = TimeOfDay.now();
     String min = time.minute < 10 ? "0${time.minute}" : time.minute.toString();
@@ -322,15 +328,28 @@ class _ContentState extends State<Content> {
                         notes: widget.notescontroller.text);
                   }
 
-
                   Navigator.of(context).pop();
+                  String messagetext = widget.widget.subuuid == ""
+                      ? "Value Added Successfully"
+                      : "Value updated Successfully";
                   // debugPrint("hello");
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    backgroundColor: Colors.transparent,
-                    content: Text("Value Added Succesfully"),
+                  ScaffoldMessenger.of(widget.widget.dialogcontext)
+                      .showSnackBar(SnackBar(
+                    content: Text(messagetext),
                     behavior: SnackBarBehavior.floating,
                   ));
+                  // WidgetsBinding.instance.addPostFrameCallback((_) {
+                  //   ScaffoldMessenger.of(widget.widget.dialogcontext)
+                  //       .showSnackBar(SnackBar(
+                  //     content: Text(messagetext),
+                  //     behavior: SnackBarBehavior.floating,
+                  //   ));
+                  // });
+
+                  // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //   content: Text("Value Added Succesfully"),
+                  //   behavior: SnackBarBehavior.floating,
+                  // ));
 
                   // debugPrint("hello");
                 }

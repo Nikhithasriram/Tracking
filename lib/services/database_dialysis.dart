@@ -41,10 +41,13 @@ class DatabaseDialysis {
         .where(_sortingTimestamp,
             isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         .where(_sortingTimestamp, isLessThanOrEqualTo: Timestamp.fromDate(end))
-        .orderBy(_sortingTimestamp , )
+        .orderBy(
+          _sortingTimestamp,
+        )
         .get();
     return _convertoDialysisReading(betweendatesdocs);
   }
+
   Future<DialysisReading?> pdreading({required String uuid}) async {
     final pd = users.doc(_auth.currentUser!.uid).collection('PD');
     final sameuuid = await pd.where(_uuid, isEqualTo: uuid).get();
@@ -56,8 +59,9 @@ class DatabaseDialysis {
 
       final reading = await pd.doc(docid).get();
       // print(reading[_session]);
+      print(reading[_netml]);
       return DialysisReading(
-          netml: reading[_netml],
+          netml: (reading.get(_netml) as num).toDouble(),
           date: reading[_date],
           session: _convertToOneSession(reading[_session]),
           uuid: uuid,
@@ -300,6 +304,31 @@ class DatabaseDialysis {
           );
           break;
         }
+      }
+    }
+    if (added == false && onesessionarray.length == 1) {
+      added = true;
+      if (readingdatetime.isAfter(
+          mydatetime(onesessionarray[0].date, onesessionarray[0].time))) {
+        onesessionarray.add(Onesession(
+            inml: reading.inml,
+            outml: reading.outml,
+            date: reading.date,
+            time: reading.time,
+            sessionnet: 0,
+            notes: reading.notes,
+            uuid: reading.uuid));
+      } else {
+        onesessionarray.insert(
+            0,
+            Onesession(
+                inml: reading.inml,
+                outml: reading.outml,
+                date: reading.date,
+                time: reading.time,
+                sessionnet: 0,
+                notes: reading.notes,
+                uuid: reading.uuid));
       }
     }
     if (added == false) {
