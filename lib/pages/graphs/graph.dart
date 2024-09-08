@@ -66,9 +66,9 @@ class _GraphState extends State<Graph> {
                     )
                   ],
                   legend: const Legend(
-                      isVisible: true,
-                      overflowMode: LegendItemOverflowMode.wrap,
-                    ),
+                    isVisible: true,
+                    overflowMode: LegendItemOverflowMode.wrap,
+                  ),
                   series: lineseries(
                       widget.weightvalue,
                       widget.waterIntakeValue,
@@ -98,6 +98,7 @@ List<CartesianSeries> lineseries(
         enableTooltip: true,
         name: "Weight",
         yAxisName: 'weightAxis',
+        color: Colors.green,
         // xAxisName: "Date",
         // yAxisName: "Weight",
         dataSource: weightvalue,
@@ -111,6 +112,7 @@ List<CartesianSeries> lineseries(
         enableTooltip: true,
         animationDuration: animationduration,
         name: "Water Input",
+        color: Colors.blue,
         // xAxisName: "Date",
         // yAxisName: "Weight",
         dataSource: waterIntakeValue,
@@ -124,6 +126,7 @@ List<CartesianSeries> lineseries(
         enableTooltip: true,
         name: "Water Output",
         animationDuration: animationduration,
+        color: Colors.amber,
 
         // xAxisName: "Date",
         // yAxisName: "Weight",
@@ -138,6 +141,7 @@ List<CartesianSeries> lineseries(
         enableTooltip: true,
         name: "PD NetOut",
         animationDuration: animationduration,
+        color: Colors.purple,
 
         // xAxisName: "Date",
         // yAxisName: "Weight",

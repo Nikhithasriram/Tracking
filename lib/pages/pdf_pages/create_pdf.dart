@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -8,26 +7,76 @@ import 'package:tracking_app/models/dialysisclass.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/models/weightclass.dart';
 import 'package:tracking_app/pages/pdf_pages/preview_pdf.dart';
+import 'package:tracking_app/services/user.dart';
 
 Future<void> createPDF(
     {required List<NewWeight> weightvalue,
     required List<DayWater> waterIntakeValue,
     required List<DayWater> waterOutputValue,
     required List<DialysisReading> dialysisValue,
-    required Uint8List image}) async {
+    required Uint8List image,
+    required AppUser appuser}) async {
   PdfDocument document = PdfDocument();
   final page = document.pages.add();
-  PdfPageTemplateElement pageheader = PdfPageTemplateElement(
-      Rect.fromLTRB(0, 0, document.pageSettings.size.width, 100));
-  pageheader.graphics
-      .drawString("PD Report", PdfStandardFont(PdfFontFamily.helvetica, 40));
-  pageheader.graphics
-      .drawLine(PdfPens.black, const Offset(5, 80), const Offset(805, 80));
-  document.template.top = pageheader;
-  // page.graphics
-  //     .drawString("PD Report", PdfStandardFont(PdfFontFamily.helvetica, 40));
-  // page.graphics
-  //     .drawLine(PdfPens.black, const Offset(5, 80), const Offset(805, 80));
+  final PdfGraphics graphics = page.graphics;
+  double marginLeft = 20;
+  double yPosition = 100;
+  final PdfPageTemplateElement pageHeader = PdfPageTemplateElement(
+    Rect.fromLTRB(0, 0, document.pageSettings.size.width, 100),
+  );
+
+  // Draw the header text in the page template.
+  pageHeader.graphics.drawString(
+    "PD Report",
+    PdfStandardFont(PdfFontFamily.helvetica, 40),
+    bounds: Rect.fromLTWH(0, 20, document.pageSettings.size.width, 60),
+  );
+
+  // Assign the header to the page template.
+  document.template.top = pageHeader;
+
+  graphics.drawString(
+    "Name: ${appuser.name}",
+    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    bounds: Rect.fromLTWH(marginLeft, yPosition,
+        document.pageSettings.size.width - marginLeft * 2, 20),
+  );
+
+  yPosition += 20; // Move down for the next line
+
+  graphics.drawString(
+    "Gender: ${appuser.gender}",
+    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    bounds: Rect.fromLTWH(marginLeft, yPosition,
+        document.pageSettings.size.width - marginLeft * 2, 20),
+  );
+
+  yPosition += 20; // Move down for the next line
+
+  String date =
+      appuser.dob != null ? DateFormat.yMMMd().format(appuser.dob!) : "";
+  graphics.drawString(
+    "DOB: $date",
+    PdfStandardFont(PdfFontFamily.helvetica, 15),
+    bounds: Rect.fromLTWH(marginLeft, yPosition,
+        document.pageSettings.size.width - marginLeft * 2, 20),
+  );
+
+  graphics.drawString("Hospital: ${appuser.hospital}",
+      PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(document.pageSettings.width - 200, 100,
+          document.pageSettings.width, 120));
+  graphics.drawString(
+      "Doctor: ${appuser.doctor}", PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(document.pageSettings.width - 200, 120,
+          document.pageSettings.width, 140));
+
+  // Draw a line below the header.
+  pageHeader.graphics.drawLine(
+    PdfPens.black,
+    const Offset(0, 70),
+    Offset(document.pageSettings.size.width, 70),
+  );
 
   int count = 0;
   count = weightvalue.isNotEmpty ? count + 1 : count;
@@ -105,7 +154,7 @@ Future<void> createPDF(
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(waterIntakeValue[0].date, "1:00 pm");
+    date = mydatetime(waterOutputValue[0].date, "1:00 pm");
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
@@ -125,7 +174,7 @@ Future<void> createPDF(
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(waterIntakeValue[0].date, "1:00 pm");
+    date = mydatetime(dialysisValue[0].date, "1:00 pm");
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
@@ -207,7 +256,8 @@ Future<void> createPDF(
   }
   // print(ele);
 
-  grid.draw(page: page, bounds: const Rect.fromLTRB(5, 10, 5, 0));
+  grid.draw(page: page, bounds: const Rect.fromLTRB(5, 200, 5, 0));
+
   final PdfBitmap bitmap = PdfBitmap(image);
   final double height = bitmap.height.toDouble();
   final double width = bitmap.width.toDouble();
@@ -215,11 +265,66 @@ Future<void> createPDF(
   final double newwidth = newheight * width / height;
   print(height);
   print(width);
+  double initialleft;
+  if (combined.length == 4) {
+    initialleft = 70;
+  } else if (combined.length == 3) {
+    initialleft = 100;
+  } else if (combined.length == 2) {
+    initialleft = 140;
+  } else {
+    initialleft = 200;
+  }
   final page2 = document.pages.add();
+  if (weightvalue.isNotEmpty) {
+    page2.graphics.drawString(
+      "Weight",
+      PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(initialleft, 40, initialleft + 50, 70),
+    );
+    page2.graphics.drawRectangle(
+        bounds: Rect.fromLTRB(initialleft + 55, 45, initialleft + 65, 55),
+        brush: PdfSolidBrush(PdfColor(76, 175, 80)));
+    initialleft = initialleft + 80;
+  }
+
+  if (waterIntakeValue.isNotEmpty) {
+    page2.graphics.drawString(
+      "Water Intake",
+      PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(initialleft, 40, initialleft + 90, 70),
+    );
+    page2.graphics.drawRectangle(
+        bounds: Rect.fromLTRB(initialleft + 90, 45, initialleft + 100, 55),
+        brush: PdfSolidBrush(PdfColor(33, 150, 243)));
+    initialleft = initialleft + 115;
+  }
+  if (waterOutputValue.isNotEmpty) {
+    page2.graphics.drawString(
+      "Water Output",
+      PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(initialleft, 40, initialleft + 95, 70),
+    );
+    page2.graphics.drawRectangle(
+        bounds: Rect.fromLTRB(initialleft + 95, 45, initialleft + 105, 55),
+        brush: PdfSolidBrush(PdfColor(255, 193, 7)));
+    initialleft = initialleft + 120;
+  }
+  if (dialysisValue.isNotEmpty) {
+    page2.graphics.drawString(
+      "PD Out",
+      PdfStandardFont(PdfFontFamily.helvetica, 15),
+      bounds: Rect.fromLTRB(initialleft, 40, initialleft + 55, 70),
+    );
+    page2.graphics.drawRectangle(
+        bounds: Rect.fromLTRB(initialleft + 55, 45, initialleft + 65, 55),
+        brush: PdfSolidBrush(PdfColor(156, 39, 176)));
+    initialleft = initialleft + 75;
+  }
   page2.graphics
       .drawString("PD Trend", PdfStandardFont(PdfFontFamily.helvetica, 20));
   page2.graphics
-      .drawImage(bitmap, Rect.fromLTRB(50, 20, newwidth + 50, newheight + 20));
+      .drawImage(bitmap, Rect.fromLTRB(50, 60, newwidth + 50, newheight + 30));
 
   List<int> bytes = await document.save();
   document.dispose();

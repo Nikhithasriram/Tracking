@@ -8,6 +8,7 @@ import 'package:tracking_app/pages/pdf_pages/create_pdf.dart';
 import 'package:tracking_app/services/database_dialysis.dart';
 import 'package:tracking_app/services/database_water.dart';
 import 'package:tracking_app/services/database_weight.dart';
+import 'package:tracking_app/services/user.dart';
 
 Future<void> pdfdata(
     {required Selected option,
@@ -19,6 +20,7 @@ Future<void> pdfdata(
   List<DayWater> waterIntakeValue = [];
   List<DayWater> waterOutputValue = [];
   List<DialysisReading> dialysisValue = [];
+  AppUser appUser = await User().appUserinfo();
 
   DateTime end = DateTime.now();
   if (startdate == null && enddate == null) {
@@ -62,8 +64,9 @@ Future<void> pdfdata(
       weightvalue: weightvalue,
       waterIntakeValue: waterIntakeValue,
       waterOutputValue: waterOutputValue,
-      dialysisValue: dialysisValue ,
-      image: image);
+      dialysisValue: dialysisValue,
+      image: image ,
+      appuser:appUser);
 }
 
 DateTime getdate(Selected option) {

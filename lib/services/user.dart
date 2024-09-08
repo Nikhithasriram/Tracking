@@ -34,6 +34,19 @@ class User {
     }
   }
 
+  Future<AppUser> appUserinfo() async {
+    final usercollection =
+        await users.doc(_auth.currentUser!.uid).collection(appuser).get();
+    final docs = usercollection.docs.first;
+    return AppUser(
+      name: docs.get(_name),
+      gender: docs.get(_gender),
+      dob: (docs.get(_dob) as Timestamp).toDate(),
+      doctor: docs.get(_doctor),
+      hospital: docs.get(_hospital),
+    );
+  }
+
   Stream<AppUser> get getuser {
     return users
         .doc(_auth.currentUser!.uid)
