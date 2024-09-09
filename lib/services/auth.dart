@@ -29,14 +29,14 @@ class AuthService {
 
         return userCredential.user;
       } on FirebaseAuthException catch (e) {
-        // if (context.mounted) {
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(
-        //       content: Text("An error occurred. Please try again.${e.code}"),
-        //       behavior: SnackBarBehavior.floating,
-        //     ),
-        //   );
-        // }
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("An error occurred. Please try again.${e.code}"),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
         return null;
       }
     } else {

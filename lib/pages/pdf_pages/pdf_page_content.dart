@@ -202,7 +202,8 @@ class _PDFPageState extends State<PDFPage> {
                             // setState(() {
                             //   loading = false;
                             // });
-                          }).then((v) {
+                          }).then((v) async {
+                            await Future.delayed(const Duration(seconds: 5));
                             setState(() {
                               loading = false;
                             });

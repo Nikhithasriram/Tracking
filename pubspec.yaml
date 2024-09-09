@@ -51,10 +51,30 @@ dependencies:
   open_file: ^3.5.3
   path_provider: ^2.1.4
   screenshot: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+  flutter_lints: ^3.0.0
+
+flutter_native_splash:
+  android: true
+  ios: false
+  web: false
+  color: "#ffffff"  
+  image: "assets/logo.png"  
+  android_12:
+    color: "#ffffff" 
+    image: "assets/logo.png"  
+    
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/logo_foreground.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

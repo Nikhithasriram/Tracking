@@ -5,8 +5,9 @@ import 'package:tracking_app/authentication.dart';
 import 'package:tracking_app/services/user.dart';
 import 'package:tracking_app/utils/edit_profile_alert.dart';
 import 'package:tracking_app/utils/loading.dart';
-import 'package:tracking_app/services/auth.dart';
+// import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
+import 'package:tracking_app/utils/sign_out.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -89,7 +90,7 @@ class _DrawerContentState extends State<DrawerContent> {
                     "Home",
                   ),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const Authentication(),
                     ));
                   },
@@ -107,13 +108,27 @@ class _DrawerContentState extends State<DrawerContent> {
                   leading: const Icon(Icons.logout_rounded),
                   title: const Text("Sign Out"),
                   onTap: () async {
-                    setState(() {
-                      loading = false;
-                    });
-                    await AuthService().signOut(context);
-                    setState(() {
-                      loading = true;
-                    });
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return const SignOut();
+                      },
+                    ));
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (context) {
+                    //     return Scaffold(
+                    //       backgroundColor: Colors.blueGrey.shade50,
+                    //       body: Center(
+                    //         child: Loading(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ));
+                    // // setState(() {
+                    // //   loading = false;
+                    // // });
+                    // await AuthService().signOut(context);
+
+                    // Navigator.of(context).pop();
                   },
                 ),
               ],
