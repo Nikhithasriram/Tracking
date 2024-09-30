@@ -1,16 +1,14 @@
 # tracking_app
+A tracking app for PD(Peritoneal Dialysis) with graphs and a option to export data as pdf
+## A app that tracks - 
+#### daily weight
+#### water intake and urine output
+#### dialysis bag intake ml and new output ml
+## packages used for
+#### graphs - syncfusion graphs
+#### pdf - syncfusion pdfs
 
-A new Flutter project.
+# tech stack
+![My Skills](https://skillicons.dev/icons?i=flutter,firebase,dart,figma&theme=dark)
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
