@@ -48,8 +48,8 @@ class DialysisMenu extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) {
-                  return DialysisConfirmDelete(uuid: uuid, subuuid: subuuid);
+                builder: (BuildContext dialogcontext) {
+                  return DialysisConfirmDelete(uuid: uuid, subuuid: subuuid , dialogcontext: dialogcontext,);
                 },
               );
             },

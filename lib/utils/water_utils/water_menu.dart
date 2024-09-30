@@ -53,8 +53,8 @@ class WaterMenu extends StatelessWidget {
               onPressed: () {
                 showDialog(
                     context: context,
-                    builder: (context) {
-                      return WaterConfirmDelete(uuid: uuid, subuuid: subuuid);
+                    builder: (BuildContext dialogContext) {
+                      return WaterConfirmDelete(uuid: uuid, subuuid: subuuid , dialogcontext: dialogContext,);
                     });
               },
               icon: const Icon(Icons.delete)),

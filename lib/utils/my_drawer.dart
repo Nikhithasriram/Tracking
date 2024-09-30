@@ -25,7 +25,7 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget build(BuildContext context) {
     return StreamProvider.value(
         value: User().getuser,
-        initialData: AppUser(),
+        initialData: AppUser(name: "Default"),
         child: const DrawerContent());
   }
 }
@@ -76,7 +76,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 const SizedBox(
                   height: 3,
                 ),
-                Center(child: Text('name:${data.name}')),
+                Center(child: Text(data.name)),
                 ListTile(
                   leading: const Icon(Icons.person),
                   title: const Text("Edit Profile"),

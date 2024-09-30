@@ -39,8 +39,8 @@ class EditPanel extends StatelessWidget {
               onPressed: () {
                 showDialog(
                     context: context,
-                    builder: (context) {
-                      return ConfirmDelete(uuid: uuid);
+                    builder: (BuildContext dialogcontext) {
+                      return ConfirmDelete(uuid: uuid , dialogcontext: dialogcontext,);
                     });
               },
               icon: const Icon(Icons.delete)),

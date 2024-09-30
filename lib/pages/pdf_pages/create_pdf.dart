@@ -190,7 +190,10 @@ Future<void> createPDF(
   // print(lastdate.toString());
   // print(latestdate.toString());
 
-  while (idate.isAfter(lastdate)) {
+  while (idate.isAfter(lastdate) ||
+      (idate.year == lastdate.year &&
+          idate.month == lastdate.month &&
+          idate.day == lastdate.day)) {
     int pos = 0;
 
     List<String> defaultrow;
@@ -215,19 +218,24 @@ Future<void> createPDF(
           defaultrow[0] = DateFormat.yMMMd().format(idate);
 
           if (e.key == "weight") {
-            if (counter[e.key] != 0) {
+            String weight = e.value[counter[e.key]].weight.toString();
+            --counter[e.key];
+            while (counter[e.key] > 0) {
               if (mydatetime(e.value[counter[e.key]].date, "1:00 pm")
                   .isAtSameMomentAs(mydatetime(
-                      e.value[counter[e.key] - 1].date, "1:00 pm"))) {
-                defaultrow[pos] =
-                    '${e.value[counter[e.key]].weight.toString()}\n${e.value[counter[e.key] - 1].weight.toString()}';
-                counter[e.key] = counter[e.key] - 2;
+                      e.value[counter[e.key] + 1].date, "1:00 pm"))) {
+                weight =
+                    "$weight \n${e.value[counter[e.key] - 1].weight.toString()}";
+                // defaultrow[pos] =
+                //     '${e.value[counter[e.key]].weight.toString()}\n${e.value[counter[e.key] - 1].weight.toString()}';
+                counter[e.key]--;
+                
 
-                continue;
+              } else {
+                break;
               }
             }
-            defaultrow[pos] = e.value[counter[e.key]].weight.toString();
-            counter[e.key]--;
+            defaultrow[pos] = weight;
           }
           if (e.key == "waterIntake") {
             defaultrow[pos] = e.value[counter[e.key]].intakeml.toString();

@@ -16,7 +16,7 @@ class User {
   final String _doctor = "doctor";
 
   Future<void> addUser(
-      {String? name,
+      {required String name,
       DateTime? dob,
       String? gender,
       String? hospital,
@@ -38,12 +38,16 @@ class User {
     final usercollection =
         await users.doc(_auth.currentUser!.uid).collection(appuser).get();
     final docs = usercollection.docs.first;
+   DateTime? dob;
+    if (docs.get(_dob) != null) {
+      dob = (docs.get(_dob) as Timestamp).toDate();
+    }
     return AppUser(
-      name: docs.get(_name),
-      gender: docs.get(_gender),
-      dob: (docs.get(_dob) as Timestamp).toDate(),
-      doctor: docs.get(_doctor),
-      hospital: docs.get(_hospital),
+      name: docs.get(_name) ?? "Default",
+      gender: docs.get(_gender) ?? "",
+      dob: dob,
+      doctor: docs.get(_doctor) ?? "",
+      hospital: docs.get(_hospital) ?? "",
     );
   }
 
@@ -55,16 +59,21 @@ class User {
         .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
         final userDoc = snapshot.docs.first;
+        DateTime? dob;
+        if (userDoc.get(_dob) != null) {
+          dob = (userDoc.get(_dob) as Timestamp).toDate();
+        }
+
         return AppUser(
           name: userDoc.get(_name),
-          gender: userDoc.get(_gender),
-          dob: (userDoc.get(_dob) as Timestamp).toDate(),
-          doctor: userDoc.get(_doctor),
-          hospital: userDoc.get(_hospital),
+          gender: userDoc.get(_gender) ?? " ",
+          dob: dob,
+          doctor: userDoc.get(_doctor) ?? "",
+          hospital: userDoc.get(_hospital) ?? "",
         );
       } else {
-        addUser();
-        return AppUser(name: "default");
+        addUser(name: "Default");
+        return AppUser(name: "Default");
       }
     });
   }
@@ -93,7 +102,7 @@ class AppUser {
   AppUser(
       {this.name = "Default",
       this.dob,
-      this.gender,
-      this.hospital,
-      this.doctor});
+      this.gender ="",
+      this.hospital ="",
+      this.doctor = ""});
 }
