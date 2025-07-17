@@ -48,18 +48,18 @@ class DialysisIndividualTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          onesessionreadings.inml != 0
+          onesessionreadings.outml != 0
               ? Text(
-                  "In :${onesessionreadings.inml.toString()}ml",
+                  "Out :${onesessionreadings.outml.toString()}ml",
                   style: const TextStyle(fontSize: 14),
                 )
               : const SizedBox.shrink(),
           const SizedBox(
             width: 8,
           ),
-          onesessionreadings.outml != 0
+          onesessionreadings.inml != 0
               ? Text(
-                  "Out :${onesessionreadings.outml.toString()}ml",
+                  "In   :${onesessionreadings.inml.toString()}ml",
                   style: const TextStyle(fontSize: 14),
                 )
               : const SizedBox.shrink(),
@@ -73,6 +73,8 @@ class DialysisIndividualTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 " net :${onesessionreadings.sessionnet.toString()} ml",

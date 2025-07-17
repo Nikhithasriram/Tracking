@@ -18,9 +18,9 @@ class IndividualListtile extends StatelessWidget {
     // print("subuuid $subuuid");
 
     final String type = water.type == Watertype.intake
-        ? "Intake"
+        ? "Water Intake"
         : water.type == Watertype.output
-            ? "Output"
+            ? "Urine Output"
             : "Misc";
     return ListTile(
       dense: true,

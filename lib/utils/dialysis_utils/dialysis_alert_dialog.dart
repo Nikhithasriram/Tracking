@@ -201,7 +201,7 @@ class _ContentState extends State<Content> {
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "In",
+                  hintText: "Dialysis Fluid In",
                   suffixIcon: Padding(
                     padding: EdgeInsets.all(15),
                     child: Text("ml"),
@@ -227,7 +227,7 @@ class _ContentState extends State<Content> {
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "Out",
+                  hintText: "Dialysis Fluid Out",
                   suffixIcon: Padding(
                     padding: EdgeInsets.all(15),
                     child: Text("ml"),

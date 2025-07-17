@@ -29,8 +29,8 @@ class _WaterListTileState extends State<WaterListTile> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Input: ${widget.daily.intakeml} ml"),
-              Text("Output: ${widget.daily.outputml} ml"),
+              Text("Intake: ${widget.daily.intakeml} ml"),
+              Text("urine: ${widget.daily.outputml} ml"),
             ],
           ),
           trailing: Row(

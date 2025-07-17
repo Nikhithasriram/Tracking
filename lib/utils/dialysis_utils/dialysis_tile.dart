@@ -15,7 +15,7 @@ class DialysisTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ExpansionTile(
-        title: Text("Net out: ${reading.netml} ml"),
+        title: Text("Net Fluid out: ${reading.netml} ml"),
         controlAffinity: ListTileControlAffinity.leading,
         tilePadding: const EdgeInsets.only(left: 8, right: 4),
         collapsedBackgroundColor: Colors.white,
