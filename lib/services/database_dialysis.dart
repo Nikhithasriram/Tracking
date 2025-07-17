@@ -160,6 +160,9 @@ class DatabaseDialysis {
       }
       if (newsessionmap.length > 0) {
         newsessionmap[0][_sessionnet] = 0;
+        if (newsessionmap[0][_outml] != 0) {
+          newsessionmap[0][_sessionnet] = newsessionmap[0][_outml];
+        }
       }
       double newnetml = 0;
       for (var i in newsessionmap) {
@@ -261,68 +264,23 @@ class DatabaseDialysis {
           uuid: reading.uuid));
     }
     if (added == false) {
-      for (int i = 0; i < onesessionarray.length - 1; i++) {
+      for (int i = 0; i < onesessionarray.length; i++) {
         DateTime loopdatetime =
             mydatetime(onesessionarray[i].date, onesessionarray[i].time);
-        DateTime nextloopdatetime = mydatetime(
-            onesessionarray[i + 1].date, onesessionarray[i + 1].time);
-        if (readingdatetime == loopdatetime) {
+        if (readingdatetime.isBefore(loopdatetime)) {
           added = true;
           onesessionarray.insert(
-            i + 1,
-            Onesession(
-                inml: reading.inml,
-                outml: reading.outml,
-                date: reading.date,
-                time: reading.time,
-                sessionnet: 0,
-                notes: reading.notes,
-                uuid: reading.uuid),
-          );
-          break;
-        } else if ((readingdatetime.isAfter(loopdatetime) &&
-            readingdatetime.isBefore(nextloopdatetime))) {
-          // double sessionnet = reading.outml - onesessionarray[i].inml;
-          // print("something");
-          added = true;
-          onesessionarray.insert(
-            i + 1,
-            Onesession(
-                inml: reading.inml,
-                outml: reading.outml,
-                date: reading.date,
-                time: reading.time,
-                sessionnet: 0,
-                notes: reading.notes,
-                uuid: reading.uuid),
-          );
+              i,
+              Onesession(
+                  inml: reading.inml,
+                  outml: reading.outml,
+                  date: reading.date,
+                  time: reading.time,
+                  sessionnet: 0,
+                  notes: reading.notes,
+                  uuid: reading.uuid));
           break;
         }
-      }
-    }
-    if (added == false && onesessionarray.length == 1) {
-      added = true;
-      if (readingdatetime.isAfter(
-          mydatetime(onesessionarray[0].date, onesessionarray[0].time))) {
-        onesessionarray.add(Onesession(
-            inml: reading.inml,
-            outml: reading.outml,
-            date: reading.date,
-            time: reading.time,
-            sessionnet: 0,
-            notes: reading.notes,
-            uuid: reading.uuid));
-      } else {
-        onesessionarray.insert(
-            0,
-            Onesession(
-                inml: reading.inml,
-                outml: reading.outml,
-                date: reading.date,
-                time: reading.time,
-                sessionnet: 0,
-                notes: reading.notes,
-                uuid: reading.uuid));
       }
     }
     if (added == false) {
@@ -337,11 +295,15 @@ class DatabaseDialysis {
           notes: reading.notes,
           uuid: reading.uuid));
     }
+
     for (int i = 1; i < onesessionarray.length; i++) {
       onesessionarray[i].sessionnet =
           onesessionarray[i].outml - onesessionarray[i - 1].inml;
     }
     onesessionarray[0].sessionnet = 0;
+    if (onesessionarray[0].outml != 0.0) {
+      onesessionarray[0].sessionnet = onesessionarray[0].outml;
+    }
     return _converttomap(onesessionarray);
   }
 }
