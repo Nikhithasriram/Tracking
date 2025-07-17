@@ -157,6 +157,7 @@ class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
               }
               return null;
             },
+            key: const Key("weight_text_field"),
             controller: widget.weightcontroller,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(

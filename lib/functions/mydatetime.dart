@@ -10,11 +10,10 @@ DateTime mydatetime(String completedate, String completetime) {
   if (hrs == 12 && period == "am") {
     hrs = 0;
   }
-  if (period == "pm") {
+  else if (period == "pm" && hrs != 12) {
     hrs = hrs + 12;
   }
   String withzerohr = "";
   withzerohr = hrs < 10 ? "0$hrs" : hrs.toString();
-
   return DateTime.parse("$year-$month-$date $withzerohr:$min:00");
 }

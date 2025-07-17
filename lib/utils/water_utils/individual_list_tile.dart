@@ -24,6 +24,7 @@ class IndividualListtile extends StatelessWidget {
             : "Misc";
     return ListTile(
       dense: true,
+      visualDensity:const VisualDensity(vertical: -4),
       leading: Container(
         width: 3,
         color: water.type == Watertype.intake

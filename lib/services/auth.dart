@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tracking_app/main.dart';
 
 class AuthService {
   Future<FirebaseApp> initializeFirebase() async {
@@ -12,6 +13,12 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<User?> signInwithGoogle({required BuildContext context}) async {
+    if (isIntegrationTest) {
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: 'test@gmail.com', password: '123456');
+      return userCredential.user;
+    }
+
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
@@ -47,19 +54,18 @@ class AuthService {
   Future signOut(BuildContext context) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
+      // throw Exception("forced exception");
       await _auth.signOut();
       await googleSignIn.signOut();
-
-      // print("signed out");
     } catch (e) {
-      // if (context.mounted) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text("An error occurred. Please try again.$e"),
-      //       behavior: SnackBarBehavior.floating,
-      //     ),
-      //   );
-      // }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("An error occurred. Please try again"),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 

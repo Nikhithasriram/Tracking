@@ -54,6 +54,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.4.1
   flutter_lints: ^3.0.0
+  firebase_crashlytics: ^3.5.7
 
 flutter_native_splash:
   android: true
@@ -68,6 +69,8 @@ flutter_native_splash:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter_icons:

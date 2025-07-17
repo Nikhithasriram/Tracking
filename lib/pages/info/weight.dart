@@ -42,6 +42,7 @@ class _WeightState extends State<WeightPage> {
               ),
             ),
       floatingActionButton: FloatingActionButton(
+        key: const Key("floating_button"),
         onPressed: () {
           createnewElement(context: context);
         },

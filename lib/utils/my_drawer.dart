@@ -8,6 +8,7 @@ import 'package:tracking_app/utils/loading.dart';
 // import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
 import 'package:tracking_app/utils/sign_out.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -102,6 +103,13 @@ class _DrawerContentState extends State<DrawerContent> {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const PDFPage(),
                     ));
+                  },
+                ),
+                ListTile(
+                  // leading: const ,
+                  title: const Text("crash app"),
+                  onTap: () {
+                    FirebaseCrashlytics.instance.crash();
                   },
                 ),
                 ListTile(

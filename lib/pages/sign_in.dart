@@ -59,6 +59,7 @@ class _SignInState extends State<SignIn> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: InkWell(
+                              key:const Key("sign_in_button"),
                               customBorder: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               onTap: () async {

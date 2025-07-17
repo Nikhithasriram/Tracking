@@ -52,11 +52,8 @@ class DatabaseDialysis {
     final pd = users.doc(_auth.currentUser!.uid).collection('PD');
     final sameuuid = await pd.where(_uuid, isEqualTo: uuid).get();
     final docsnapshots = sameuuid.docs;
-    // print("nice");
     if (docsnapshots.isNotEmpty) {
       String docid = docsnapshots[0].id;
-      // print("nice1");
-
       final reading = await pd.doc(docid).get();
       return DialysisReading(
           netml: (reading.get(_netml) as num).toDouble(),
@@ -270,7 +267,6 @@ class DatabaseDialysis {
         DateTime nextloopdatetime = mydatetime(
             onesessionarray[i + 1].date, onesessionarray[i + 1].time);
         if (readingdatetime == loopdatetime) {
-          // print("something in going onnnn");
           added = true;
           onesessionarray.insert(
             i + 1,
