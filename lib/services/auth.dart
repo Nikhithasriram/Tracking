@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,9 @@ class AuthService {
 
   Future<User?> signInwithGoogle({required BuildContext context}) async {
     if (isIntegrationTest) {
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: 'test@gmail.com', password: '123456');
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: 'test@gmail.com', password: '123456');
       return userCredential.user;
     }
 
@@ -68,6 +70,42 @@ class AuthService {
       }
     }
   }
+
+  bool needesReauthentication() {
+    try {
+      if (_auth.currentUser == null) {
+        return true;
+      }
+      final lastSigninTime = _auth.currentUser!.metadata.lastSignInTime;
+      if (lastSigninTime == null) {
+        return true;
+      }
+      final now = DateTime.now();
+      final diffrence = now.difference(lastSigninTime);
+      if (diffrence.inMinutes < 5) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  Future deleteAccount() async {
+    try {
+      if (_auth.currentUser == null) return;
+      final userDoc = FirebaseFirestore.instance.doc(_auth.currentUser!.uid);
+      // await deleteUserData(userDoc);
+      //TODO 
+    } catch (e) {
+      print("Error");
+    }
+  }
+
+  //TODO
+  // Future deleteUserData(DocumentReference userDoc) async {
+  //   final collections = await userDoc.firestore.collection(collectionPath)
+  // }
 
   Stream<User?> get user {
     return _auth.authStateChanges();

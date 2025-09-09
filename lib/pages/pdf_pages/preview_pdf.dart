@@ -1,13 +1,26 @@
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:share_plus/share_plus.dart';
 
-Future<void> saveandlanchFile(List<int> bytes, String filename) async {
-
-  final storage = await getExternalStorageDirectories();
-  final path = storage!.first.path;
-  final file = File('$path/$filename');
-  await file.writeAsBytes(bytes, flush: true);
-   await OpenFile.open('$path/$filename');
-  // print(result);
+Future<String> saveandlanchFile(
+    {required List<int> bytes,
+    required String filename}) async {
+  try {
+    final temppDir = await getTemporaryDirectory();
+    // final path = storage!.first.path;
+    final path = '${temppDir.path}/$filename';
+    final file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    final shareresult = await Share.shareXFiles(
+      [XFile(file.path)],
+      text: 'Generated PDF Report',
+    );
+    if (shareresult.status == ShareResultStatus.unavailable) {
+      return "Share not available";
+    }
+    return "File Shared successfully";
+  } catch (e) {
+    return "Error creating the file";
+  }
+  // await OpenFile.open('${temppDir.path}/$filename');
 }

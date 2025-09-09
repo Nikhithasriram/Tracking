@@ -1,23 +1,10 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:tracking_app/functions/mydatetime.dart';
-import 'package:tracking_app/models/dialysisclass.dart';
-import 'package:tracking_app/models/waterclass.dart';
-import 'package:tracking_app/models/weightclass.dart';
-import 'package:tracking_app/pages/pdf_pages/preview_pdf.dart';
-import 'package:tracking_app/services/user.dart';
+import 'package:tracking_app/models/reportclass.dart';
 
-Future<void> createPDF(
-    {required List<NewWeight> weightvalue,
-    required List<DayWater> waterIntakeValue,
-    required List<DayWater> waterOutputValue,
-    required List<DialysisReading> dialysisValue,
-    required Uint8List image,
-    required AppUser appuser,
-    required DateTime start,
-    required DateTime end}) async {
+Future<List<int>> drawPDF({required ReportData reportData}) async {
   PdfDocument document = PdfDocument();
   final page = document.pages.add();
   final PdfGraphics graphics = page.graphics;
@@ -38,7 +25,7 @@ Future<void> createPDF(
   document.template.top = pageHeader;
 
   graphics.drawString(
-    "Name: ${appuser.name}",
+    "Name: ${reportData.appuser.name}",
     PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
@@ -47,7 +34,7 @@ Future<void> createPDF(
   yPosition += 20; // Move down for the next line
 
   graphics.drawString(
-    "Gender: ${appuser.gender}",
+    "Hospital: ${reportData.appuser.hospital}",
     PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
@@ -55,25 +42,26 @@ Future<void> createPDF(
 
   yPosition += 20; // Move down for the next line
 
-  String date =
-      appuser.dob != null ? DateFormat.yMMMd().format(appuser.dob!) : "";
+  String date = reportData.appuser.dob != null
+      ? DateFormat.yMMMd().format(reportData.appuser.dob!)
+      : "";
   graphics.drawString(
-    "DOB: $date",
+    "Doctor: ${reportData.appuser.doctor}",
     PdfStandardFont(PdfFontFamily.helvetica, 13),
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
   );
 
-  graphics.drawString("Hospital: ${appuser.hospital}",
+  graphics.drawString("Gender: ${reportData.appuser.gender}",
       PdfStandardFont(PdfFontFamily.helvetica, 13),
       bounds: Rect.fromLTRB(document.pageSettings.width - 230, 100,
           document.pageSettings.width, 120));
   graphics.drawString(
-      "Doctor: ${appuser.doctor}", PdfStandardFont(PdfFontFamily.helvetica, 13),
+      "DOB: $date", PdfStandardFont(PdfFontFamily.helvetica, 13),
       bounds: Rect.fromLTRB(document.pageSettings.width - 230, 120,
           document.pageSettings.width, 140));
   graphics.drawString(
-      "Date Range: ${DateFormat.yMMMd().format(start)} - ${DateFormat.yMMMd().format(end)}",
+      "Date Range: ${DateFormat.yMMMd().format(reportData.start)} - ${DateFormat.yMMMd().format(reportData.end)}",
       PdfStandardFont(PdfFontFamily.helvetica, 13),
       bounds: Rect.fromLTRB(marginLeft, 160, document.pageSettings.width, 180));
 
@@ -85,11 +73,11 @@ Future<void> createPDF(
   );
 
   int count = 0;
-  count = weightvalue.isNotEmpty ? count + 1 : count;
-  count = waterIntakeValue.isNotEmpty ? count + 1 : count;
-  count = waterOutputValue.isNotEmpty ? count + 1 : count;
+  count = reportData.weightvalue.isNotEmpty ? count + 1 : count;
+  count = reportData.waterIntakevalue.isNotEmpty ? count + 1 : count;
+  count = reportData.waterOutputvalue.isNotEmpty ? count + 1 : count;
   //plus 2 for no of bags used
-  count = dialysisValue.isNotEmpty ? count + 2 : count;
+  count = reportData.dialysisvalue.isNotEmpty ? count + 2 : count;
 
   PdfGrid grid = PdfGrid();
   grid.style = PdfGridStyle(
@@ -112,75 +100,79 @@ Future<void> createPDF(
   DateTime latestdate = DateTime(1900);
   DateTime lastdate = DateTime(2500);
 
-  if (weightvalue.isNotEmpty) {
+  if (reportData.weightvalue.isNotEmpty) {
     header.cells[i].value = "Weight";
     // weightvalue = weightvalue.reversed.toList();
-    combination.add(weightvalue);
-    combined.addAll({"weight": weightvalue});
-    counter.addAll({"weight": weightvalue.length - 1});
+    combination.add(reportData.weightvalue);
+    combined.addAll({"weight": reportData.weightvalue});
+    counter.addAll({"weight": reportData.weightvalue.length - 1});
     // counter.add(weightvalue.length - 1);
-    DateTime date = mydatetime(weightvalue.last.date, weightvalue.last.time);
+    DateTime date = mydatetime(
+        reportData.weightvalue.last.date, reportData.weightvalue.last.time);
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(weightvalue[0].date, weightvalue[0].time);
+    date = mydatetime(
+        reportData.weightvalue[0].date, reportData.weightvalue[0].time);
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
     i++;
   }
-  if (waterIntakeValue.isNotEmpty) {
+  if (reportData.waterIntakevalue.isNotEmpty) {
     header.cells[i].value = "Water Intake";
     // waterIntakeValue = waterIntakeValue.reversed.toList();
-    combination.add(waterIntakeValue);
-    combined.addAll({"waterIntake": waterIntakeValue});
-    counter.addAll({"waterIntake": waterIntakeValue.length - 1});
+    combination.add(reportData.waterIntakevalue);
+    combined.addAll({"waterIntake": reportData.waterIntakevalue});
+    counter.addAll({"waterIntake": reportData.waterIntakevalue.length - 1});
 
     // counter.add(waterIntakeValue.length - 1);
-    DateTime date = mydatetime(waterIntakeValue.last.date, "1:00 pm");
+    DateTime date =
+        mydatetime(reportData.waterIntakevalue.last.date, "1:00 pm");
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(waterIntakeValue[0].date, "1:00 pm");
+    date = mydatetime(reportData.waterIntakevalue[0].date, "1:00 pm");
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
     i++;
   }
-  if (waterOutputValue.isNotEmpty) {
+  if (reportData.waterOutputvalue.isNotEmpty) {
     header.cells[i].value = "Water Output";
     // waterOutputValue = waterOutputValue.reversed.toList();
 
-    combination.add(waterOutputValue);
+    combination.add(reportData.waterOutputvalue);
     // counter.add(waterOutputValue.length - 1);
-    combined.addAll({"waterOutput": waterOutputValue});
-    counter.addAll({"waterOutput": waterOutputValue.length - 1});
+    combined.addAll({"waterOutput": reportData.waterOutputvalue});
+    counter.addAll({"waterOutput": reportData.waterOutputvalue.length - 1});
 
-    DateTime date = mydatetime(waterOutputValue.last.date, "1:00 pm");
+    DateTime date =
+        mydatetime(reportData.waterOutputvalue.last.date, "1:00 pm");
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(waterOutputValue[0].date, "1:00 pm");
+    date = mydatetime(reportData.waterOutputvalue[0].date, "1:00 pm");
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
     i++;
   }
-  if (dialysisValue.isNotEmpty) {
+  if (reportData.dialysisvalue.isNotEmpty) {
     header.cells[i].value = "PD net Out";
     i++;
     header.cells[i].value = "No of Bags";
     // dialysisValue = dialysisValue.reversed.toList();
-    combination.add(dialysisValue);
-    combined.addAll({"dialysis": dialysisValue});
-    counter.addAll({"dialysis": dialysisValue.length - 1});
+    combination.add(reportData.dialysisvalue);
+    combined.addAll({"dialysis": reportData.dialysisvalue});
+    counter.addAll({"dialysis": reportData.dialysisvalue.length - 1});
 
     // counter.add(dialysisValue.length - 1);
-    DateTime date = mydatetime(dialysisValue.last.date, "1:00 pm");
+    DateTime date = mydatetime(reportData.dialysisvalue.last.date, "1:00 pm");
     if (date.isAfter(latestdate)) {
       latestdate = date;
     }
-    date = mydatetime(dialysisValue[0].date, "1:00 pm");
+    date = mydatetime(reportData.dialysisvalue[0].date, "1:00 pm");
     if (date.isBefore(lastdate)) {
       lastdate = date;
     }
@@ -197,7 +189,7 @@ Future<void> createPDF(
     int pos = 0;
 
     List<String> defaultrow;
-    if (dialysisValue.isNotEmpty) {
+    if (reportData.dialysisvalue.isNotEmpty) {
       //plus two is one for the date and another one is for the no of bags
       defaultrow = List.filled(combined.length + 2, "");
     } else {
@@ -229,8 +221,6 @@ Future<void> createPDF(
                 // defaultrow[pos] =
                 //     '${e.value[counter[e.key]].weight.toString()}\n${e.value[counter[e.key] - 1].weight.toString()}';
                 counter[e.key]--;
-                
-
               } else {
                 break;
               }
@@ -272,7 +262,7 @@ Future<void> createPDF(
 
   grid.draw(page: page, bounds: const Rect.fromLTRB(5, 200, 5, 0));
 
-  final PdfBitmap bitmap = PdfBitmap(image);
+  final PdfBitmap bitmap = PdfBitmap(reportData.image);
   final double height = bitmap.height.toDouble();
   final double width = bitmap.width.toDouble();
   final double newheight = height * 0.4;
@@ -288,7 +278,7 @@ Future<void> createPDF(
     initialleft = 200;
   }
   final page2 = document.pages.add();
-  if (weightvalue.isNotEmpty) {
+  if (reportData.weightvalue.isNotEmpty) {
     page2.graphics.drawString(
       "Weight",
       PdfStandardFont(PdfFontFamily.helvetica, 15),
@@ -300,7 +290,7 @@ Future<void> createPDF(
     initialleft = initialleft + 80;
   }
 
-  if (waterIntakeValue.isNotEmpty) {
+  if (reportData.waterIntakevalue.isNotEmpty) {
     page2.graphics.drawString(
       "Water Intake",
       PdfStandardFont(PdfFontFamily.helvetica, 15),
@@ -311,7 +301,7 @@ Future<void> createPDF(
         brush: PdfSolidBrush(PdfColor(33, 150, 243)));
     initialleft = initialleft + 115;
   }
-  if (waterOutputValue.isNotEmpty) {
+  if (reportData.waterOutputvalue.isNotEmpty) {
     page2.graphics.drawString(
       "Water Output",
       PdfStandardFont(PdfFontFamily.helvetica, 15),
@@ -322,7 +312,7 @@ Future<void> createPDF(
         brush: PdfSolidBrush(PdfColor(255, 193, 7)));
     initialleft = initialleft + 120;
   }
-  if (dialysisValue.isNotEmpty) {
+  if (reportData.dialysisvalue.isNotEmpty) {
     page2.graphics.drawString(
       "PD Out",
       PdfStandardFont(PdfFontFamily.helvetica, 15),
@@ -340,5 +330,6 @@ Future<void> createPDF(
 
   List<int> bytes = await document.save();
   document.dispose();
-  saveandlanchFile(bytes, 'report.pdf');
+  return bytes;
+  // saveandlanchFile(bytes, 'report.pdf');
 }

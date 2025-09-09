@@ -1,16 +1,15 @@
 import 'dart:typed_data';
-
 import 'package:tracking_app/models/dialysisclass.dart';
 import 'package:tracking_app/models/graphselection.dart';
+import 'package:tracking_app/models/reportclass.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/models/weightclass.dart';
-import 'package:tracking_app/pages/pdf_pages/create_pdf.dart';
 import 'package:tracking_app/services/database_dialysis.dart';
 import 'package:tracking_app/services/database_water.dart';
 import 'package:tracking_app/services/database_weight.dart';
 import 'package:tracking_app/services/user.dart';
 
-Future<void> pdfdata(
+Future<ReportData> pdfdata(
     {required Selected option,
     required Set<Graphtype> graphveiw,
     required Uint8List image,
@@ -21,7 +20,7 @@ Future<void> pdfdata(
   List<DayWater> waterOutputValue = [];
   List<DialysisReading> dialysisValue = [];
   AppUser appUser = await User().appUserinfo();
-  DateTime start  = getdate(option);
+  DateTime start = getdate(option);
   // DateTime end;
 
   DateTime end = DateTime.now();
@@ -47,8 +46,7 @@ Future<void> pdfdata(
       dialysisValue = await DatabaseDialysis()
           .dialysisReadingBetweenDates(getdate(option), end);
     }
-  }
-  else if (startdate != null && enddate != null) {
+  } else if (startdate != null && enddate != null) {
     start = startdate;
     end = enddate;
     if (graphveiw.contains(Graphtype.weight)) {
@@ -69,13 +67,25 @@ Future<void> pdfdata(
     }
   }
 
-  createPDF(
+  ReportData reportdata = ReportData(
       weightvalue: weightvalue,
-      waterIntakeValue: waterIntakeValue,
-      waterOutputValue: waterOutputValue,
-      dialysisValue: dialysisValue,
+      waterIntakevalue: waterIntakeValue,
+      waterOutputvalue: waterOutputValue,
+      dialysisvalue: dialysisValue,
       image: image,
-      appuser: appUser , start: start , end: end);
+      appuser: appUser,
+      start: start,
+      end: end);
+  return reportdata;
+  // createPDF(
+  //     weightvalue: weightvalue,
+  //     waterIntakeValue: waterIntakeValue,
+  //     waterOutputValue: waterOutputValue,
+  //     dialysisValue: dialysisValue,
+  //     image: image,
+  //     appuser: appUser,
+  //     start: start,
+  //     end: end);
 }
 
 DateTime getdate(Selected option) {

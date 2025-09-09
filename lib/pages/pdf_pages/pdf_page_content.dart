@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:tracking_app/models/graphselection.dart';
+import 'package:tracking_app/models/reportclass.dart';
+import 'package:tracking_app/pages/pdf_pages/draw_pdf.dart';
+import 'package:tracking_app/pages/pdf_pages/preview_pdf.dart';
 import 'package:tracking_app/pages/pdf_pages/selection_data.dart';
 import 'package:tracking_app/utils/my_drawer.dart';
 import 'package:screenshot/screenshot.dart';
@@ -182,32 +185,33 @@ class _PDFPageState extends State<PDFPage> {
 
                     ElevatedButton(
                         onPressed: () async {
+                          await managePdfCreationAndDisplay();
                           // selectionData(selectedview, dateRange.start, dateRange.end,
                           //     graphveiw);
                           // await Future.delayed(const Duration(milliseconds: 500));
                           // if (!mounted) return;
-                          setState(() {
-                            loading = true;
-                            // print(loading);
-                          });
-                          screenshotController
-                              .captureFromWidget(MediaQuery(
-                            data: MediaQuery.of(context),
-                            child: buildGraph(selectedview, dateRange.start,
-                                dateRange.end, Set.from(graphveiw), 0),
-                          ))
-                              .then((capturedimage) {
-                            selectionData(selectedview, dateRange.start,
-                                dateRange.end, graphveiw, capturedimage);
-                            // setState(() {
-                            //   loading = false;
-                            // });
-                          }).then((v) async {
-                            await Future.delayed(const Duration(seconds: 5));
-                            setState(() {
-                              loading = false;
-                            });
-                          });
+                          // setState(() {
+                          //   loading = true;
+                          //   // print(loading);
+                          // });
+                          // screenshotController
+                          //     .captureFromWidget(MediaQuery(
+                          //   data: MediaQuery.of(context),
+                          //   child: buildGraph(selectedview, dateRange.start,
+                          //       dateRange.end, Set.from(graphveiw), 0),
+                          // ))
+                          //     .then((capturedimage) {
+                          //   selectionData(selectedview, dateRange.start,
+                          //       dateRange.end, graphveiw, capturedimage);
+                          //   // setState(() {
+                          //   //   loading = false;
+                          //   // });
+                          // }).then((v) async {
+                          //   await Future.delayed(const Duration(seconds: 5));
+                          //   setState(() {
+                          //     loading = false;
+                          //   });
+                          // });
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -219,5 +223,64 @@ class _PDFPageState extends State<PDFPage> {
               ),
             ),
     );
+  }
+
+  Future<void> managePdfCreationAndDisplay() async {
+    setState(() {
+      loading = true;
+      // print(loading);
+    });
+    try {
+      final capturedImage =
+          await screenshotController.captureFromWidget(MediaQuery(
+        data: MediaQuery.of(context),
+        child: buildGraph(selectedview, dateRange.start, dateRange.end,
+            Set.from(graphveiw), 0),
+      ));
+
+      ReportData reportData = await selectionData(selectedview, dateRange.start,
+          dateRange.end, graphveiw, capturedImage);
+
+      List<int> bytes = await drawPDF(reportData: reportData);
+      setState(() {
+        loading = false;
+      });
+
+
+      final result =
+          await saveandlanchFile(bytes: bytes, filename: 'report.pdf');
+
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(result)));
+
+      // await Future.delayed(const Duration(seconds: 5));
+      // setState(() {
+      //   loading = false;
+      // });
+      //     .then((capturedimage) async {
+      //   ReportData reportData = await selectionData(selectedview,
+      //       dateRange.start, dateRange.end, graphveiw, capturedimage);
+      //   List<int> bytes = await drawPDF(reportData: reportData);
+      //   saveandlanchFile(
+      //       bytes: bytes, filename: 'report.pdf', context: context);
+      //   // createPdf()
+      // }).then((v) async {
+      //   await Future.delayed(const Duration(seconds: 5));
+      //   setState(() {
+      //     loading = false;
+      //   });
+      // });
+    } catch (e) {
+      // print(e);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Something went wrong. Please try again.")));
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 }

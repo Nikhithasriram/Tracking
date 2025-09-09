@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tracking_app/services/user.dart';
 import 'package:intl/intl.dart';
@@ -65,6 +66,10 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
           children: [
             TextFormField(
               controller: namecontroller,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r"[a-zA-Z0-9\s.,!?@#\$%&*()-_+=:;'/\/]"))
+              ],
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Name",
@@ -74,35 +79,78 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             const SizedBox(
               height: 15,
             ),
-            Row(
+            // RadioListTile(
+            //     value: Gender.F,
+            //     groupValue: selectedvalue,
+            //     onChanged: (value) {}),
+            Wrap(
               children: [
-                Radio(
-                    value: Gender.F,
-                    groupValue: selectedvalue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedvalue = value;
-                      });
-                    }),
-                const Text("F"),
-                Radio(
-                    value: Gender.M,
-                    groupValue: selectedvalue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedvalue = value;
-                      });
-                    }),
-                const Text("M"),
-                Radio(
-                    value: Gender.none,
-                    groupValue: selectedvalue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedvalue = value;
-                      });
-                    }),
-                const Text("None"),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Radio(
+                        visualDensity: const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity,
+                            vertical: VisualDensity.minimumDensity),
+                        value: Gender.F,
+                        groupValue: selectedvalue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedvalue = value;
+                          });
+                        }),
+                    const Text("F"),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Radio(
+                        visualDensity: const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity,
+                            vertical: VisualDensity.minimumDensity),
+                        value: Gender.M,
+                        groupValue: selectedvalue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedvalue = value;
+                          });
+                        }),
+                    const Text("M"),
+                  ],
+                ),
+                // Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: [
+                //     Radio(
+                //         value: Gender.none,
+                //         groupValue: selectedvalue,
+                //         onChanged: (value) {
+                //           setState(() {
+                //             selectedvalue = value;
+                //           });
+                //         }),
+                //     const Text("Others"),
+                //   ],
+                // ),
+
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Radio(
+                        visualDensity: const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity,
+                            vertical: VisualDensity.minimumDensity),
+                        value: Gender.none,
+                        groupValue: selectedvalue,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedvalue = value;
+                          });
+                        }),
+                    const Text("Prefer Not to Say"),
+                  ],
+                ),
               ],
             ),
             const SizedBox(
@@ -110,6 +158,10 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             ),
             TextFormField(
               controller: dobcontroller,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r"[a-zA-Z0-9\s.,!?@#\$%&*()-_+=:;'/\/]"))
+              ],
               onTap: () async {
                 date = await showDatePicker(
                     context: context,
@@ -131,6 +183,10 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             ),
             TextFormField(
               controller: doctorcontroller,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r"[a-zA-Z0-9\s.,!?@#\$%&*()-_+=:;'/\/]"))
+              ],
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Doctor Name",
@@ -142,6 +198,10 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             ),
             TextFormField(
               controller: hospitalcontroller,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r"[a-zA-Z0-9\s.,!?@#\$%&*()-_+=:;'/\/]"))
+              ],
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Hospital Name",
@@ -171,9 +231,11 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
                 val = "none";
               }
               // print(hospitalcontroller.text);
+              // print(DateFormat.yMMMd().parse(dobcontroller.text));
+
               User().updateUser(
                   namecontroller.text,
-                  date ,
+                  DateFormat.yMMMd().tryParse(dobcontroller.text),
                   val,
                   hospitalcontroller.text,
                   doctorcontroller.text);
