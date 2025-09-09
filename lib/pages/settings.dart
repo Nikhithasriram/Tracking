@@ -205,7 +205,7 @@ class _SettingsState extends State<Settings> {
                                               } else {
                                                 // FirebaseF
                                                 // firebaseF
-                                                FirebaseFunctions.instance.httpsCallable
+                                                // FirebaseFunctions.instance.httpsCallable
                                               }
                                             },
                                             child: const Text(
