@@ -15,5 +15,5 @@ DateTime mydatetime(String completedate, String completetime) {
   }
   String withzerohr = "";
   withzerohr = hrs < 10 ? "0$hrs" : hrs.toString();
-  return DateTime.parse("$year-$month-$date $withzerohr:$min:00");
+  return DateTime.parse("$year-$month-${date}T$withzerohr:$min:00");
 }

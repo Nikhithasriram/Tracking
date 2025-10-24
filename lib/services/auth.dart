@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tracking_app/main.dart';
 import 'package:tracking_app/models/authclass.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
@@ -15,17 +14,6 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<AuthResult> signInwithGoogle() async {
-    if (isIntegrationTest) {
-      // final UserCredential userCredential = await FirebaseAuth.instance
-      //     .signInWithEmailAndPassword(
-      //         email: 'test@gmail.com', password: '123456');
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: 'test@gmail.com', password: '123456');
-      // return userCredential.user;
-      // return AuthResult(success: true);
-      return Success();
-    }
     try {
       final googlesignin = GoogleSignIn.instance;
       googlesignin.initialize(

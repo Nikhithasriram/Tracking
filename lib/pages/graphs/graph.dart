@@ -131,7 +131,7 @@ List<CartesianSeries> lineseries(
         // xAxisName: "Date",
         // yAxisName: "Weight",
         dataSource: waterOutputValue,
-        xValueMapper: (DayWater data, _) => mydatetime(data.date, "5:00 pm"),
+        xValueMapper: (DayWater data, _) => mydatetime(data.date, "5:00 pm"),  
         yValueMapper: (DayWater data, _) => data.outputml.round()));
   }
   if (dialysisValue.isNotEmpty) {
