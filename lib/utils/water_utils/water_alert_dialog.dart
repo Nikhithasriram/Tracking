@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/models/waterclass.dart';
 import 'package:tracking_app/services/database_water.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 // import 'package:tracking_app/models/waterclass.dart';
 
 class WaterAlertDialog extends StatefulWidget {
@@ -357,11 +358,12 @@ class _ContentsAfterFutureState extends State<ContentsAfterFuture> {
                       ? "Value Added Successfully"
                       : "Value updated Successfully";
                   // debugPrint("hello");
-                  ScaffoldMessenger.of(widget.widget.dialogcontext)
-                        .showSnackBar(SnackBar(
-                      content: Text(messagetext),
-                      behavior: SnackBarBehavior.floating,
-                    ));
+                  showsnackbar(widget.widget.dialogcontext, messagetext);
+                  // ScaffoldMessenger.of(widget.widget.dialogcontext)
+                  //       .showSnackBar(SnackBar(
+                  //     content: Text(messagetext),
+                  //     behavior: SnackBarBehavior.floating,
+                  //   ));
               }
             },
             child: Text(

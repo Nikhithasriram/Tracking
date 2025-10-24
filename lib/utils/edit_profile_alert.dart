@@ -79,83 +79,23 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             const SizedBox(
               height: 15,
             ),
-            // RadioListTile(
-            //     value: Gender.F,
-            //     groupValue: selectedvalue,
-            //     onChanged: (value) {}),
-            Wrap(
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Radio(
-                        visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                            vertical: VisualDensity.minimumDensity),
-                        value: Gender.F,
-                        groupValue: selectedvalue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedvalue = value;
-                          });
-                        }),
-                    const Text("F"),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Radio(
-                        visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                            vertical: VisualDensity.minimumDensity),
-                        value: Gender.M,
-                        groupValue: selectedvalue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedvalue = value;
-                          });
-                        }),
-                    const Text("M"),
-                  ],
-                ),
-                // Row(
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: [
-                //     Radio(
-                //         value: Gender.none,
-                //         groupValue: selectedvalue,
-                //         onChanged: (value) {
-                //           setState(() {
-                //             selectedvalue = value;
-                //           });
-                //         }),
-                //     const Text("Others"),
-                //   ],
-                // ),
-
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Radio(
-                        visualDensity: const VisualDensity(
-                            horizontal: VisualDensity.minimumDensity,
-                            vertical: VisualDensity.minimumDensity),
-                        value: Gender.none,
-                        groupValue: selectedvalue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedvalue = value;
-                          });
-                        }),
-                    const Text("Prefer Not to Say"),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
+           RadioGroup(
+             groupValue: selectedvalue,
+             onChanged: (Gender? value){
+               setState(() {
+                 selectedvalue = value;
+               });
+             }, child: Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                Radio(value: Gender.F),
+                Text("F"),
+                Radio(value: Gender.M),
+                Text("M"),
+                Radio(value: Gender.none),
+                Text("Prefer not to say"),
+               ],
+           )),
             TextFormField(
               controller: dobcontroller,
               inputFormatters: [

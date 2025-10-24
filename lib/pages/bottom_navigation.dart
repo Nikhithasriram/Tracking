@@ -25,7 +25,7 @@ class _MyBottomNavigationState extends State<MyBottomNavigation> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-          StreamProvider<List<NewWeight>>.value(value: DatabaseWeights().weights, initialData:const []),
+        StreamProvider<List<NewWeight>>.value(value: DatabaseWeights().weights, initialData:const []),
         StreamProvider<List<DayWater>>.value(value: DatabaseWater().waters, initialData:const []),
         StreamProvider<List<DialysisReading>>.value(value: DatabaseDialysis().dialysis, initialData:const []),
 

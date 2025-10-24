@@ -7,7 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'firebase_options.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const bool isIntegrationTest = bool.fromEnvironment('INTEGRATION_TEST', defaultValue: false);
 void main() async {
@@ -20,6 +20,7 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+  await dotenv.load(fileName: ".env");
   // FirebaseFunctions.instance.use
   runApp(const MyApp());
 }

@@ -4,7 +4,6 @@ import 'package:tracking_app/services/database_dialysis.dart';
 import 'package:tracking_app/utils/dialysis_utils/dialysis_confirm_delete.dart';
 import 'package:tracking_app/utils/dialysis_utils/dialysisdialog.dart';
 
-
 class DialysisMenu extends StatelessWidget {
   final String uuid;
   final String subuuid;
@@ -39,8 +38,9 @@ class DialysisMenu extends StatelessWidget {
               //     .items[index]
               //     .session[subindex];
               if (value != null) {
-                await Share.share(
-                    "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.sessionnet} \nDate: ${value.date} \nTime: ${value.time}");
+                await SharePlus.instance.share(ShareParams(
+                    text:
+                        "In: ${value.inml} \nOut: ${value.outml} \nNetout :${value.sessionnet} \nDate: ${value.date} \nTime: ${value.time}"));
               }
             },
             icon: const Icon(Icons.share)),
@@ -49,7 +49,11 @@ class DialysisMenu extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext dialogcontext) {
-                  return DialysisConfirmDelete(uuid: uuid, subuuid: subuuid , dialogcontext: dialogcontext,);
+                  return DialysisConfirmDelete(
+                    uuid: uuid,
+                    subuuid: subuuid,
+                    dialogcontext: dialogcontext,
+                  );
                 },
               );
             },

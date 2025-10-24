@@ -8,7 +8,6 @@ import 'package:tracking_app/utils/edit_profile_alert.dart';
 import 'package:tracking_app/utils/loading.dart';
 // import 'package:tracking_app/services/auth.dart';
 import 'package:tracking_app/pages/pdf_pages/pdf_page_content.dart';
-import 'package:tracking_app/utils/sign_out.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -85,7 +84,7 @@ class _DrawerContentState extends State<DrawerContent> {
                     "Home",
                   ),
                   onTap: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const Authentication(),
                     ));
                   },
@@ -102,7 +101,7 @@ class _DrawerContentState extends State<DrawerContent> {
                   leading: const Icon(Icons.send),
                   title: const Text("Export and Send"),
                   onTap: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const PDFPage(),
                     ));
                   },
@@ -118,33 +117,33 @@ class _DrawerContentState extends State<DrawerContent> {
                     ));
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.logout_rounded),
-                  title: const Text("Sign Out"),
-                  onTap: () async {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) {
-                        return const SignOut();
-                      },
-                    ));
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) {
-                    //     return Scaffold(
-                    //       backgroundColor: Colors.blueGrey.shade50,
-                    //       body: Center(
-                    //         child: Loading(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ));
-                    // // setState(() {
-                    // //   loading = false;
-                    // // });
-                    // await AuthService().signOut(context);
+                // ListTile(
+                //   leading: const Icon(Icons.logout_rounded),
+                //   title: const Text("Sign Out"),
+                //   onTap: () async {
+                //     Navigator.of(context).push(MaterialPageRoute(
+                //       builder: (context) {
+                //         return const SignOut();
+                //       },
+                //     ));
+                //     // Navigator.of(context).push(MaterialPageRoute(
+                //     //   builder: (context) {
+                //     //     return Scaffold(
+                //     //       backgroundColor: Colors.blueGrey.shade50,
+                //     //       body: Center(
+                //     //         child: Loading(),
+                //     //       ),
+                //     //     );
+                //     //   },
+                //     // ));
+                //     // // setState(() {
+                //     // //   loading = false;
+                //     // // });
+                //     // await AuthService().signOut(context);
 
-                    // Navigator.of(context).pop();
-                  },
-                ),
+                //     // Navigator.of(context).pop();
+                //   },
+                // ),
               ],
             ),
     );

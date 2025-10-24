@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tracking_app/services/database_weight.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 
 class MyAlertDialog extends StatefulWidget {
   final String uuid;
@@ -232,11 +233,12 @@ class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
                           ? "Value Added Successfully"
                           : "Value updated Successfully";
                       // debugPrint("hello");
-                      ScaffoldMessenger.of(widget.widget.dialogcontext)
-                          .showSnackBar(SnackBar(
-                        content: Text(messagetext),
-                        behavior: SnackBarBehavior.floating,
-                      ));
+                      showsnackbar(widget.widget.dialogcontext, messagetext);
+                      // ScaffoldMessenger.of(widget.widget.dialogcontext)
+                      //     .showSnackBar(SnackBar(
+                      //   content: Text(messagetext),
+                      //   behavior: SnackBarBehavior.floating,
+                      // ));
                     } else {
                       DatabaseWeights().updatevalue(
                           uuid: widget.widget.uuid,
@@ -249,11 +251,12 @@ class _ContentsOfAlertBoxState extends State<ContentsOfAlertBox> {
                           ? "Value Added Successfully"
                           : "Value updated Successfully";
                       // debugPrint("hello");
-                      ScaffoldMessenger.of(widget.widget.dialogcontext)
-                          .showSnackBar(SnackBar(
-                        content: Text(messagetext),
-                        behavior: SnackBarBehavior.floating,
-                      ));
+                      showsnackbar(widget.widget.dialogcontext, messagetext);
+                      // ScaffoldMessenger.of(widget.widget.dialogcontext)
+                      //     .showSnackBar(SnackBar(
+                      //   content: Text(messagetext),
+                      //   behavior: SnackBarBehavior.floating,
+                      // ));
                     }
                   }
                 },

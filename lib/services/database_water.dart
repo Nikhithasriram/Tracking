@@ -360,12 +360,19 @@ class DatabaseWater {
   }
 
   Stream<List<DayWater>> get waters {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
     return users
-        .doc(_auth.currentUser!.uid)
+        .doc(user.uid)
         .collection('water')
         .orderBy(_sortingtime, descending: true)
         .snapshots()
-        .map(_listfromsnapshots);
+        .map(_listfromsnapshots)
+        .handleError((e) => {
+          // print("error ---------------------- $e")
+          });
   }
 
   List<NewWater> _convertdaycontent(List daycontents) {

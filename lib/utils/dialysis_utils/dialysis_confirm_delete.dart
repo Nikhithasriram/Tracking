@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/services/database_dialysis.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 // import 'package:tracking_app/Provider/dialysisprovider.dart';
 // import 'package:provider/provider.dart';
 
@@ -26,8 +27,9 @@ class DialysisConfirmDelete extends StatelessWidget {
               await DatabaseDialysis().delete(uuid: uuid, subuuid: subuuid);
               if (!context.mounted) return;
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(dialogcontext).showSnackBar(
-                  const SnackBar(content: Text("Reading Deleted") , behavior: SnackBarBehavior.floating,));
+              showsnackbar(dialogcontext, "Reading Deleted");
+              // ScaffoldMessenger.of(dialogcontext).showSnackBar(
+              //     const SnackBar(content: Text("Reading Deleted") , behavior: SnackBarBehavior.floating,));
             },
             child: const Text("delete")),
         TextButton(

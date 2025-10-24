@@ -12,6 +12,7 @@ import 'package:tracking_app/utils/my_drawer.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:tracking_app/pages/graphs/graph_page.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 
 class PDFPage extends StatefulWidget {
   const PDFPage({super.key});
@@ -252,8 +253,9 @@ class _PDFPageState extends State<PDFPage> {
 
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(result)));
+      showsnackbar(context, result);
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(SnackBar(content: Text(result)));
 
       // await Future.delayed(const Duration(seconds: 5));
       // setState(() {
@@ -275,8 +277,9 @@ class _PDFPageState extends State<PDFPage> {
     } catch (e) {
       // print(e);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Something went wrong. Please try again.")));
+      showsnackbar(context, "Something went wrong. Please try again.");
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //     content: Text("Something went wrong. Please try again.")));
     } finally {
       setState(() {
         loading = false;

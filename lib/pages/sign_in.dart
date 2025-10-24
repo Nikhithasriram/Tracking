@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tracking_app/models/authclass.dart';
 import 'package:tracking_app/services/auth.dart';
 // import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -49,11 +51,23 @@ class _SignInState extends State<SignIn> {
                           setState(() {
                             loading = true;
                           });
-                          await AuthService()
-                              .signInwithGoogle(context: context);
-                          setState(() {
-                            loading = false;
-                          });
+                          final result = await AuthService()
+                              .signInwithGoogle();
+                          
+                          // setState(() {
+                          //   loading = false;
+                          // });
+                          if (context.mounted){
+                            if(result is Failure){
+                              setState(() {
+                                loading = false;
+                              });
+                              showsnackbar(context, result.errorMessage);
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //     SnackBar(
+                              //         content: Text(result.errorMessage)));
+                            }
+                          }
                         },
                         child: Container(
                           width: MediaQuery.sizeOf(context).width - 70,

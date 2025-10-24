@@ -47,13 +47,19 @@ class DatabaseWeights {
   // stream of weights
   Stream<List<NewWeight>> get weights {
     // if (_auth.currentUser == null) return List.empty();
-
+    final user = _auth.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
     return users
-        .doc(_auth.currentUser!.uid)
+        .doc(user.uid)
         .collection('weights')
         .orderBy(_sortingtimestamp, descending: true)
         .snapshots()
-        .map(_weightlistfromsnapshot);
+        .map(_weightlistfromsnapshot)
+        .handleError((e) => {
+          // print("error ---------------------- $e")
+          });
   }
 
   Future<List<NewWeight>> weightBetweenDates(
@@ -64,7 +70,9 @@ class DatabaseWeights {
         .where(_sortingtimestamp,
             isGreaterThanOrEqualTo: Timestamp.fromDate(start))
         .where(_sortingtimestamp, isLessThanOrEqualTo: Timestamp.fromDate(end))
-        .orderBy(_sortingtimestamp , )
+        .orderBy(
+          _sortingtimestamp,
+        )
         .get();
     return _weightlistfromsnapshot(betweendatesdocs);
   }

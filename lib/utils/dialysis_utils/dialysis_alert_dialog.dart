@@ -5,6 +5,7 @@ import 'package:tracking_app/models/dialysisclass.dart';
 // import 'package:tracking_app/models/dialysis.dart';
 import 'package:tracking_app/services/database_dialysis.dart';
 import 'package:tracking_app/utils/loading.dart';
+import 'package:tracking_app/utils/my_snackbar.dart';
 
 class DialysisAlertDialog extends StatefulWidget {
   final String uuid;
@@ -312,11 +313,12 @@ class _ContentState extends State<Content> {
                       ? "Value Added Successfully"
                       : "Value updated Successfully";
                   // debugPrint("hello");
-                  ScaffoldMessenger.of(widget.widget.dialogcontext)
-                      .showSnackBar(SnackBar(
-                    content: Text(messagetext),
-                    behavior: SnackBarBehavior.floating,
-                  ));
+                  showsnackbar(widget.widget.dialogcontext, messagetext);
+                  // ScaffoldMessenger.of(widget.widget.dialogcontext)
+                  //     .showSnackBar(SnackBar(
+                  //   content: Text(messagetext),
+                  //   behavior: SnackBarBehavior.floating,
+                  // ));
                   // WidgetsBinding.instance.addPostFrameCallback((_) {
                   //   ScaffoldMessenger.of(widget.widget.dialogcontext)
                   //       .showSnackBar(SnackBar(

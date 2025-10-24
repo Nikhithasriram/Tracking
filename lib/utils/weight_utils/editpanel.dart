@@ -31,8 +31,9 @@ class EditPanel extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 final value = await DatabaseWeights().docValues(uuid: uuid);
-                await Share.share(
-                    'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}');
+                await SharePlus.instance.share(ShareParams(
+                    text:
+                        'weight: ${value.weight} \ndate: ${value.date}\n time: ${value.time}'));
               },
               icon: const Icon(Icons.share)),
           IconButton(
@@ -40,7 +41,10 @@ class EditPanel extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (BuildContext dialogcontext) {
-                      return ConfirmDelete(uuid: uuid , dialogcontext: dialogcontext,);
+                      return ConfirmDelete(
+                        uuid: uuid,
+                        dialogcontext: dialogcontext,
+                      );
                     });
               },
               icon: const Icon(Icons.delete)),

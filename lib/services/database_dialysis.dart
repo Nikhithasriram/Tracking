@@ -22,14 +22,18 @@ class DatabaseDialysis {
   final String _sortingTimestamp = "sortingtimestamp";
 
   Stream<List<DialysisReading>> get dialysis {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return Stream.value([]);
+    }
     return users
-        .doc(_auth.currentUser!.uid)
+        .doc(user.uid)
         .collection('PD')
         .orderBy(_sortingTimestamp, descending: true)
         .snapshots()
         .map(_convertoDialysisReading)
         .handleError((e) {
-      // print(e);
+          // print("error ---------------------- $e");
     });
   }
 

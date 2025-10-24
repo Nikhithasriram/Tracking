@@ -44,9 +44,9 @@ class WaterMenu extends StatelessWidget {
                         ? "output"
                         : "misc";
                 // print("valueeeee is $value");
-                await Share.share(
-                    '$text: ${value.value}ml \ndate: ${value.date} \ntime: ${value.time}');
-                //todo implement share
+                await SharePlus.instance.share(ShareParams(
+                    text:
+                        '$text: ${value.value}ml \ndate: ${value.date} \ntime: ${value.time}'));
               },
               icon: const Icon(Icons.share)),
           IconButton(
@@ -54,7 +54,11 @@ class WaterMenu extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
-                      return WaterConfirmDelete(uuid: uuid, subuuid: subuuid , dialogcontext: dialogContext,);
+                      return WaterConfirmDelete(
+                        uuid: uuid,
+                        subuuid: subuuid,
+                        dialogcontext: dialogContext,
+                      );
                     });
               },
               icon: const Icon(Icons.delete)),

@@ -38,7 +38,7 @@ class User {
     final usercollection =
         await users.doc(_auth.currentUser!.uid).collection(appuser).get();
     final docs = usercollection.docs.first;
-   DateTime? dob;
+    DateTime? dob;
     if (docs.get(_dob) != null) {
       dob = (docs.get(_dob) as Timestamp).toDate();
     }
@@ -51,32 +51,69 @@ class User {
     );
   }
 
-  Stream<AppUser> get getuser {
-    return users
-        .doc(_auth.currentUser!.uid)
-        .collection(appuser)
-        .snapshots()
-        .map((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        final userDoc = snapshot.docs.first;
-        DateTime? dob;
-        if (userDoc.get(_dob) != null) {
-          dob = (userDoc.get(_dob) as Timestamp).toDate();
-        }
-
-        return AppUser(
-          name: userDoc.get(_name),
-          gender: userDoc.get(_gender) ?? " ",
-          dob: dob,
-          doctor: userDoc.get(_doctor) ?? "",
-          hospital: userDoc.get(_hospital) ?? "",
-        );
+  Stream<AppUser> get getuser async* {
+    final user = _auth.currentUser;
+    try {
+      if (user == null) {
+        yield AppUser(name: "Default");
       } else {
-        addUser(name: "Default");
-        return AppUser(name: "Default");
+        await for (final snapshot
+            in users.doc(user.uid).collection(appuser).snapshots()) {
+          if (snapshot.docs.isNotEmpty) {
+            final userDoc = snapshot.docs.first;
+            DateTime? dob;
+            if (userDoc.get(_dob) != null) {
+              dob = (userDoc.get(_dob) as Timestamp).toDate();
+            }
+
+            yield AppUser(
+              name: userDoc.get(_name),
+              gender: userDoc.get(_gender) ?? " ",
+              dob: dob,
+              doctor: userDoc.get(_doctor) ?? "",
+              hospital: userDoc.get(_hospital) ?? "",
+            );
+          } else {
+            addUser(name: "Default");
+            yield AppUser(name: "Default");
+          }
+        }
       }
-    });
+    } catch (e) {
+      // print("Error in app user ------ $e");
+      yield AppUser(name: "Default"); 
+    }
   }
+
+  // Stream<AppUser> get getuser {
+  //   final user = _auth.currentUser;
+  //   if (user == null) {
+  //     return Stream.value(AppUser());
+  //   }
+  //   return users.doc(user.uid).collection(appuser).snapshots().map((snapshot) {
+  //     if (snapshot.docs.isNotEmpty) {
+  //       final userDoc = snapshot.docs.first;
+  //       DateTime? dob;
+  //       if (userDoc.get(_dob) != null) {
+  //         dob = (userDoc.get(_dob) as Timestamp).toDate();
+  //       }
+
+  //       return AppUser(
+  //         name: userDoc.get(_name),
+  //         gender: userDoc.get(_gender) ?? " ",
+  //         dob: dob,
+  //         doctor: userDoc.get(_doctor) ?? "",
+  //         hospital: userDoc.get(_hospital) ?? "",
+  //       );
+  //     } else {
+  //       addUser(name: "Default");
+  //       return AppUser(name: "Default");
+  //     }
+  //   })
+  //   .handleError((e) {
+  //     // print("error in app user ---------------------- $e");
+  //   });
+  // }
 
   Future<void> updateUser(String? name, DateTime? dob, String? gender,
       String? hospital, String? doctor) async {
@@ -102,7 +139,7 @@ class AppUser {
   AppUser(
       {this.name = "Default",
       this.dob,
-      this.gender ="",
-      this.hospital ="",
+      this.gender = "",
+      this.hospital = "",
       this.doctor = ""});
 }

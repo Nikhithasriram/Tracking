@@ -51,8 +51,11 @@ Future<List<int>> drawPDF({required ReportData reportData}) async {
     bounds: Rect.fromLTWH(marginLeft, yPosition,
         document.pageSettings.size.width - marginLeft * 2, 20),
   );
-
-  graphics.drawString("Gender: ${reportData.appuser.gender}",
+  String gender = reportData.appuser.gender ?? " ";
+  if (gender == "none"){
+    gender = "Prefer Not to Say";
+  }
+  graphics.drawString("Gender: $gender",
       PdfStandardFont(PdfFontFamily.helvetica, 13),
       bounds: Rect.fromLTRB(document.pageSettings.width - 230, 100,
           document.pageSettings.width, 120));

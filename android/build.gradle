@@ -1,8 +1,10 @@
+
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
+    
 }
 
 rootProject.buildDir = "../build"
@@ -16,3 +18,19 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+// pluginManagement {
+//     repositories { google(); mavenCentral(); gradlePluginPortal() }
+//     plugins {
+//         id "com.android.application" version "8.1.1"
+//         id "org.jetbrains.kotlin.android" version "1.9.10"
+//         id "dev.flutter.flutter-gradle-plugin" version "1.0.0"
+//     }
+// }
+
+// dependencyResolutionManagement {
+//     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+//     repositories { google(); mavenCentral() }
+// }
+
+// rootProject.name = "tracking_app"
+// include(":app")
