@@ -79,23 +79,38 @@ class _UserAlerDialogState extends State<UserAlerDialog> {
             const SizedBox(
               height: 15,
             ),
-           RadioGroup(
-             groupValue: selectedvalue,
-             onChanged: (Gender? value){
-               setState(() {
-                 selectedvalue = value;
-               });
-             }, child: Row(
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                Radio(value: Gender.F),
-                Text("F"),
-                Radio(value: Gender.M),
-                Text("M"),
-                Radio(value: Gender.none),
-                Text("Prefer not to say"),
-               ],
-           )),
+           Align(
+            alignment: AlignmentGeometry.centerLeft,
+             child: RadioGroup(
+               groupValue: selectedvalue,
+               onChanged: (Gender? value){
+                 setState(() {
+                   selectedvalue = value;
+                 });
+               }, child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                 children: [
+                   Row(
+                     mainAxisSize: MainAxisSize.min,
+                     children: [
+                      Radio(value: Gender.F),
+                      Text("F"),
+                      Radio(value: Gender.M),
+                      Text("M"),
+                      
+                     ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                          Radio(value: Gender.none),
+                          Text("Prefer not to say"),
+                        ],
+                  )
+                 ],
+               )),
+           ),
             TextFormField(
               controller: dobcontroller,
               inputFormatters: [

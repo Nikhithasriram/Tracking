@@ -48,7 +48,7 @@ class AuthService {
     catch (e) {
       // if (e.)
       // return AuthResult(success:false,errorMessage:'Unable to Login :$e');
-      return Failure(errorMessage: "Something went wrong . Please try again.$e");
+      return Failure(errorMessage: "Something went wrong . Please try again. $e");
     }
     // final GoogleSignInAccount? googleUser =
     //     await GoogleSignIn.instance.authenticate();
@@ -94,7 +94,6 @@ class AuthService {
       await GoogleSignIn.instance.signOut();
       // return AuthResult(user: )
       // return AuthResult(success: true);
-      //TODO : Understand this
       return Success();
     } catch (e) {
 

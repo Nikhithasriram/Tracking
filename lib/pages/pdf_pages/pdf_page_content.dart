@@ -218,7 +218,7 @@ class _PDFPageState extends State<PDFPage> {
                             backgroundColor:
                                 const Color.fromARGB(255, 32, 127, 222),
                             foregroundColor: Colors.white),
-                        child: const Text("Preview PDF"))
+                        child: const Text("Share PDF"))
                   ],
                 ),
               ),
