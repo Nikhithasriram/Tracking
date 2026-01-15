@@ -2,6 +2,8 @@
 
 A comprehensive mobile application for managing and monitoring peritoneal dialysis treatment, designed to help patients track their daily health metrics and maintain better control of their dialysis regimen.
 
+## article
+https://nikhitha-personal-website.vercel.app/blog/building-until-the-system-said-no
 ## Features
 
 ### Core Tracking
